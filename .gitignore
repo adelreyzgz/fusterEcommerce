@@ -1,5 +1,6 @@
 
-# Ignora la carpeta FOTOS
+# Ignore
+
 000_admin/_rest/cnx/
 *.zip
 *.rar
