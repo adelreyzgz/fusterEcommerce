@@ -416,160 +416,234 @@ $(document).ready(function($) {
 							var result = data.result;
 							var p = 0;
 							if(result.length > 0){
-								tiene = true;
-								$('#listadoProductosBusqueda').html('');
-								var marcasIgnore = [];
-								result.forEach(function(row, index) {
-									var idMarcaS = row['idMar'];
-									var nbMarcaS = row['nbMarca'];
+								// FIN INTERCEPTOR
+								var access_token = localStorage.getItem("access_token_fuster");
 
-									if($.inArray(idMarcaS, marcasIgnore) == -1){
-										marcasIgnore.push(idMarcaS);
-										$('#listadoProductosBusqueda').append('<div class="M'+idMarcaS+'" style="margin-bottom: 28px;"><h3 class="rotulo-marca">'+nbMarcaS+'</h3></div>');
+								if(access_token){
+									// INICIO INTERCEPTOR
+									console.log('INICIO INTERCEPTOR')
+									var arrayRefFusterI = '';
+
+									for (let index = 0; index < result.length; index++) {
+										const element = result[index];
+
+										if(!index){
+											arrayRefFusterI += '[';
+										}
+
+										arrayRefFusterI += '"'+element.noRefFuster+'"';
+										
+										if(index < (result.length-1)){
+											arrayRefFusterI += ',';
+										}
+
+										if(index == (result.length-1)){
+											arrayRefFusterI += ']';
+										}
 									}
-								});
 
-								for (let u = 0; u < marcasIgnore.length; u++) {
-									var idMarcaS = marcasIgnore[u];
-
-									result.forEach(function(row, index) {
-										if(row['idMar'] == idMarcaS){
-											var id = row['id'];
-											var nombre = row['nombre'];
-												$.ajax({
-													method: "GET",
-													url: "<?=$base;?>000_admin/_rest/api.php?action=listarRefOemsAndCaractByIdProductoBusqueda&marc="+idMarcaS+"&idProd="+id
-												}).done(function(response) {
-													if(response){
-														p++;
-														var data = JSON.parse(response);
-														row.refOems = data.refOems;
-														row.caract = data.caract;
-														arrayData.push(row);
-
-														if(p == result.length){
-															var dataShowRefOem = '';
-															var dataShowCaract = '';
-															if(arrayData){
-																// ORGANIZAR ARRAY
-																function SortArray(x, y){
-																	if (x.nombre < y.nombre) {return -1;}
-																	if (x.nombre > y.nombre) {return 1;}
-																	return 0;
-																}
-																arrayData = arrayData.sort(SortArray);
-
-																/* datos es la variable donde va informacon  */
-																var datos = arrayData;
-																arrayData.forEach(function(row, index) {
-																	var tipodisplay = 'display: initial;';
-
-																	var dataShow3 = '';
-																	var resultRefOemById = row.refOems;
-																	var resultCaractId = row.caract;
-																	dataShowRefOem = '';
-																	dataShowCaract = '';
-																	if(resultRefOemById != '-'){
-																		resultRefOemById.forEach(function(row2, index2) {
-																			if(row2["refOem"] != row.noRefFuster){
-																				dataShowRefOem +='<li>'+row2["refOem"]+'</li>';
-																			}
-																		});
-																	}
-																	
-																	var j = 0;
-																	if(resultCaractId != '-'){
-																		tipodisplay = 'display: inline-table;';
-
-																		resultCaractId.forEach(function(row2, index2) {
-																			j++;
-																			if(j==resultCaractId.length){
-																				dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia"></span></div>';
-																			}else{
-																				dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia">|</span></div>';
-																			}
-																		});
-																	}
-
-																	var nombreUrl = cleanName(row["nombre"]);
-																	var nombreMarca = cleanName(row["nbMarca"]);
-																	var idMar = row["idMar"];
-																	var nombreCategoria = cleanName(row["nbCategoria"]);
-																	var idCat = row["idCat"];
-																	var idp = row["id"];
-																	var catPadre = row["catPadre"];
-
-																	var imgProd = "assets/images/default.png";
-																	if(row['thumbnails']){
-																		imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
-																	}
-
-																	var palabra1 = 'productos';
-																	if(idioma == 'en'){
-																		palabra1 = 'products';
-																	}
-
-																	if(idioma == 'fr'){
-																		palabra1 = 'produits';
-																	}
-																	
-																	var nct = row["nbCategoria"];
-																	
-																	if(  nct.indexOf('to. Embragu') == -1  && nct.indexOf('to.Embragu') == -1  ){
-																		dataShow3 += '\
-																		<div id="producto---" class="views-row views-row-'+p+'">\
-																			<div class="field-content"></div>\
-																			<div class="bloque-imagen">\
-																				<div class="imagen-producto">\
-																					<img src="'+imgProd+'" alt="'+nombreUrl+'-'+row["noRefFuster"]+'" title="'+nombreUrl+'-'+row["noRefFuster"]+'" />\
-																				</div>\
-																			</div>\
-																			<div class="bloque_detalle">\
-																				<div class="field-content">\
-																					<h4 class="titulo-producto">\
-																						<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/pid'+idp+'/'+nombreMarca+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
-																						<span class="precioProductos">   </span>\
-																					</h4>\
-																				</div>\
-																				<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
-																				\
-																				<div class="seccion-familia-producto">'+catPadre+'<span class="separadorr"> </span>\
-																				<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/'+nombreMarca+'/'+nombreCategoria+'/">'+nct+'</a>\
-																				<br></div>\
-																				\
-																				<div class="field-items">\
-																					<div class="field-item even" style="'+tipodisplay+'">'+dataShowCaract+'</div>\
-																				</div>\
-																				<div class="divCarrito">\
-																					<span class="cantLetter"> Cant. </span><input type="number" value="1" name="precio" class="inputPrecio">\
-																					<a href="#" class="addCarrito"  data-refFuster='+row["noRefFuster"]+'> Añadir al Carrito </a>\
-																				</div>\
-																			</div>\
-																			';
-
-																		if( nct.indexOf('Embrague') == -1 && dataShowRefOem){
-																			dataShow3 += '\
-																				<div class="bloque-oem">\
-																					<div class="producto-oems">\
-																						<strong>Ref. OEM: </strong>\
-																						<ul>'+dataShowRefOem+'</ul>\
-																					</div>\
-																				</div>\
-																			';
-																		}
-																		
-																		dataShow3 += '</div>';
-																	}
-																		
-																	$('div.M'+idMar+'').append(dataShow3);
-																});
-																
-															}
+									if(arrayRefFusterI){
+										$.ajax({
+											method: "GET",
+											headers: {
+												"Authorization": "Bearer " + access_token
+											},
+											url: 'https://apiecommercefuster.ideaconsulting.es/api/articles?codArticles='+arrayRefFusterI
+										}).done(function(response) {
+											// INICIO REQUEST INTERCEPTOR
+												var responseERP = response.data;
+												for (let i = 0; i < responseERP.length; i++) {
+													const respElement = responseERP[i];
+													for (let j = 0; j < result.length; j++) {
+														const element = result[j];
+														if(respElement.CodArticle == element.noRefFuster){
+															result[j].IDArticle = respElement.IDArticle;
+															result[j].Price = Math.round(respElement.Price);
+															result[j].Stock = Math.round(respElement.Stock);
 														}
 													}
-												});
+												}
+
+												// OBJETO MODIFICADO CON DATOS DEL ERP
+												console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+												console.log('--------------')
+												// --------------
+
+												logicaOld(result);
+
+												// --------------
+
+											// FIN REQUEST INTERCEPTOR
+										}).fail(function(response) {
+											console.log(response);
+										});
+									}
+								}else{
+									logicaOld(result);
+								}
+
+								function logicaOld(result){
+									tiene = true;
+									$('#listadoProductosBusqueda').html('');
+									var marcasIgnore = [];
+									result.forEach(function(row, index) {
+										var idMarcaS = row['idMar'];
+										var nbMarcaS = row['nbMarca'];
+
+										if($.inArray(idMarcaS, marcasIgnore) == -1){
+											marcasIgnore.push(idMarcaS);
+											$('#listadoProductosBusqueda').append('<div class="M'+idMarcaS+'" style="margin-bottom: 28px;"><h3 class="rotulo-marca">'+nbMarcaS+'</h3></div>');
 										}
 									});
+
+									for (let u = 0; u < marcasIgnore.length; u++) {
+										var idMarcaS = marcasIgnore[u];
+
+										result.forEach(function(row, index) {
+											if(row['idMar'] == idMarcaS){
+												var id = row['id'];
+												var nombre = row['nombre'];
+													$.ajax({
+														method: "GET",
+														url: "<?=$base;?>000_admin/_rest/api.php?action=listarRefOemsAndCaractByIdProductoBusqueda&marc="+idMarcaS+"&idProd="+id
+													}).done(function(response) {
+														if(response){
+															p++;
+															var data = JSON.parse(response);
+															row.refOems = data.refOems;
+															row.caract = data.caract;
+															arrayData.push(row);
+
+															if(p == result.length){
+																var dataShowRefOem = '';
+																var dataShowCaract = '';
+																if(arrayData){
+																	// ORGANIZAR ARRAY
+																	function SortArray(x, y){
+																		if (x.nombre < y.nombre) {return -1;}
+																		if (x.nombre > y.nombre) {return 1;}
+																		return 0;
+																	}
+																	arrayData = arrayData.sort(SortArray);
+
+																	/* datos es la variable donde va informacon  */
+																	var datos = arrayData;
+																	arrayData.forEach(function(row, index) {
+																		var tipodisplay = 'display: initial;';
+
+																		var dataShow3 = '';
+																		var resultRefOemById = row.refOems;
+																		var resultCaractId = row.caract;
+																		dataShowRefOem = '';
+																		dataShowCaract = '';
+																		if(resultRefOemById != '-'){
+																			resultRefOemById.forEach(function(row2, index2) {
+																				if(row2["refOem"] != row.noRefFuster){
+																					dataShowRefOem +='<li>'+row2["refOem"]+'</li>';
+																				}
+																			});
+																		}
+																		
+																		var j = 0;
+																		if(resultCaractId != '-'){
+																			tipodisplay = 'display: inline-table;';
+
+																			resultCaractId.forEach(function(row2, index2) {
+																				j++;
+																				if(j==resultCaractId.length){
+																					dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia"></span></div>';
+																				}else{
+																					dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia">|</span></div>';
+																				}
+																			});
+																		}
+
+																		var nombreUrl = cleanName(row["nombre"]);
+																		var nombreMarca = cleanName(row["nbMarca"]);
+																		var idMar = row["idMar"];
+																		var nombreCategoria = cleanName(row["nbCategoria"]);
+																		var idCat = row["idCat"];
+																		var idp = row["id"];
+																		var catPadre = row["catPadre"];
+
+																		var imgProd = "assets/images/default.png";
+																		if(row['thumbnails']){
+																			imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
+																		}
+
+																		var palabra1 = 'productos';
+																		if(idioma == 'en'){
+																			palabra1 = 'products';
+																		}
+
+																		if(idioma == 'fr'){
+																			palabra1 = 'produits';
+																		}
+																		
+																		var nct = row["nbCategoria"];
+																		
+																		if(  nct.indexOf('to. Embragu') == -1  && nct.indexOf('to.Embragu') == -1  ){
+																			dataShow3 += '\
+																			<div id="producto---" class="views-row views-row-'+p+'">\
+																				<div class="field-content"></div>\
+																				<div class="bloque-imagen">\
+																					<div class="imagen-producto">\
+																						<img src="'+imgProd+'" alt="'+nombreUrl+'-'+row["noRefFuster"]+'" title="'+nombreUrl+'-'+row["noRefFuster"]+'" />\
+																					</div>\
+																				</div>\
+																				<div class="bloque_detalle">\
+																					<div class="field-content">\
+																						<h4 class="titulo-producto">\
+																							<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/pid'+idp+'/'+nombreMarca+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
+																							<span class="precioProductos"> Precio: '+row["Price"]+'€   </span>\
+																						</h4>\
+																					</div>\
+																					<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
+																					\
+																					<div class="seccion-familia-producto">'+catPadre+'<span class="separadorr"> </span>\
+																					<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/'+nombreMarca+'/'+nombreCategoria+'/">'+nct+'</a>\
+																					<br></div>\
+																					\
+																					<div class="field-items">\
+																						<div class="field-item even" style="'+tipodisplay+'">'+dataShowCaract+'</div>\
+																					</div>\
+																					<div class="divCarrito">\
+																						<span class="cantLetter"> Cant. </span><input type="number" value="1" name="precio" class="inputPrecio">\
+																						<a href="#" class="addCarrito" data-refFuster='+row["noRefFuster"]+'  \
+																						data-idarticle='+row["IDArticle"]+'\
+																						data-price='+row["Price"]+'\
+																						data-stock='+row["Stock"]+'\
+																						data-img='+imgProd+'\
+																						data-idProd='+idp+'\> Añadir al Carrito </a>\
+																					</div>\
+																				</div>\
+																				';
+
+																			if( nct.indexOf('Embrague') == -1 && dataShowRefOem){
+																				dataShow3 += '\
+																					<div class="bloque-oem">\
+																						<div class="producto-oems">\
+																							<strong>Ref. OEM: </strong>\
+																							<ul>'+dataShowRefOem+'</ul>\
+																						</div>\
+																					</div>\
+																				';
+																			}
+																			
+																			dataShow3 += '</div>';
+																		}
+																			
+																		$('div.M'+idMar+'').append(dataShow3);
+																	});
+																	
+																}
+															}
+														}
+													});
+											}
+										});
+									}
+
 								}
 								
 					
@@ -642,7 +716,71 @@ $(document).ready(function($) {
 					var result = data.result;
 					var p = 0;
 					if(result.length > 0){
-						$('#listadoProductosBusqueda').html('');
+						var access_token = localStorage.getItem("access_token_fuster");
+						if(access_token){
+							// INICIO INTERCEPTOR
+							console.log('INICIO INTERCEPTOR')
+							var arrayRefFusterI = '';
+
+							for (let index = 0; index < result.length; index++) {
+								const element = result[index];
+
+								if(!index){
+									arrayRefFusterI += '[';
+								}
+
+								arrayRefFusterI += '"'+element.noRefFuster+'"';
+								
+								if(index < (result.length-1)){
+									arrayRefFusterI += ',';
+								}
+
+								if(index == (result.length-1)){
+									arrayRefFusterI += ']';
+								}
+							}
+
+							if(arrayRefFusterI){
+								$.ajax({
+									method: "GET",
+									headers: {
+										"Authorization": "Bearer " + access_token
+									},
+									url: 'https://apiecommercefuster.ideaconsulting.es/api/articles?codArticles='+arrayRefFusterI
+								}).done(function(response) {
+									// INICIO REQUEST INTERCEPTOR
+										var responseERP = response.data;
+										for (let i = 0; i < responseERP.length; i++) {
+											const respElement = responseERP[i];
+											for (let j = 0; j < result.length; j++) {
+												const element = result[j];
+												if(respElement.CodArticle == element.noRefFuster){
+													result[j].IDArticle = respElement.IDArticle;
+													result[j].Price = Math.round(respElement.Price);
+													result[j].Stock = Math.round(respElement.Stock);
+												}
+											}
+										}
+
+										// OBJETO MODIFICADO CON DATOS DEL ERP
+										console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+										console.log('--------------')
+										// --------------
+
+										logicaOld(result);
+
+										// --------------
+
+									// FIN REQUEST INTERCEPTOR
+								}).fail(function(response) {
+									console.log(response);
+								});
+							}
+						}else{
+							logicaOld(result);
+						}
+						function logicaOld(result){
+							$('#listadoProductosBusqueda').html('');
 						var marcasIgnore = [];
 						result.forEach(function(row, index) {
 							var idMarcaS = row['idMar'];
@@ -758,7 +896,7 @@ $(document).ready(function($) {
 																<div class="field-content">\
 																	<h4 class="titulo-producto">\
 																		<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/pid'+idp+'/'+nombreMarca+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
-																		<span class="precioProductos">   </span>\
+																		<span class="precioProductos">  Precio: '+row["Price"]+'€</span>\
 																	</h4>\
 																</div>\
 																<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
@@ -767,8 +905,13 @@ $(document).ready(function($) {
 																</div>\
 																<div class="divCarrito">\
 																	<span class="cantLetter"> Cant. </span><input type="number" value="1" name="precio" class="inputPrecio">\
-																	<a href="#" class="addCarrito"  data-refFuster='+row["noRefFuster"]+'> Añadir al Carrito </a>\
-																</div>\
+																	<a href="#" class="addCarrito"  data-refFuster='+row["noRefFuster"]+'  \
+																	data-idarticle='+row["IDArticle"]+'\
+																	data-price='+row["Price"]+'\
+																	data-stock='+row["Stock"]+'\
+																	data-img='+imgProd+'\
+																	data-idProd='+idp+'> Añadir al Carrito </a>\
+																	</div>\
 															</div>\
 															'+oemsDIV+'\
 														</div>\
@@ -784,6 +927,8 @@ $(document).ready(function($) {
 									});
 								}
 							});
+						}
+
 						}
 						
 			

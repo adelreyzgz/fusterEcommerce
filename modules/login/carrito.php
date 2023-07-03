@@ -4,6 +4,7 @@
             <h1 class='page__title title' id='page-title'>
                 <div style="width: 148px;">Carrito</div>
             </h1>
+            <a id="limpiarCarrito">vaciar</a>
             <div class='field field-name-body field-type-text-with-summary field-label-hidden'>
                 <div class='field-items' style="width: 100%;">
                     <div class='field-item even' property='content:encoded'>
@@ -22,11 +23,13 @@
 
                             
                         </table>
+                        
     
                         </div>
                     </div>
                 </div>
             </div>
+            <div><input type="text"</div>
         </div>
     </div>
 </div>

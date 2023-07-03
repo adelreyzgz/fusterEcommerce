@@ -354,7 +354,7 @@ $(document).ready(function($) {
 																data-price='+row["Price"]+'\
 																data-stock='+row["Stock"]+'\
 																data-img='+imgProd+'\
-																data-idProd='+idp+'\> Añadir al Carrito </a>\
+																data-idProd='+idp+'> Añadir al Carrito </a>\
 															</div>\
 														</div>\
 														'+oemsDIV+'\
