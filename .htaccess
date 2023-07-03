@@ -1,0 +1,113 @@
+RewriteEngine on
+
+
+#### Rutas - Repuestos Fuster
+
+# PAGINA INICIO
+RewriteRule ^([a-z]+)/inicio/$ index.php?idioma=$1
+RewriteRule ^([a-z]+)/home/$ index.php?idioma=$1
+RewriteRule ^([a-z]+)/accueil/$ index.php?idioma=$1
+
+RewriteRule ^es/$ index.php?idioma=es
+RewriteRule ^en/$ index.php?idioma=en
+RewriteRule ^fr/$ index.php?idioma=fr
+
+
+# PAGINA PRODUCTOS
+RewriteRule ^([a-z]+)/productos/$ index.php?module=modules/productos/productos.php&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/products/$ index.php?module=modules/productos/productos.php&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/produits/$ index.php?module=modules/productos/productos.php&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+
+
+RewriteRule ^([a-z]+)/productos/mid([0-9]+)/([a-zA-Z0-9-]+)/([a-z0-9-]+)/$ index.php?module=modules/productos/productos.php&marca=$2&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/products/mid([0-9]+)/([a-zA-Z0-9-]+)/([a-z0-9-]+)/$ index.php?module=modules/productos/productos.php&marca=$2&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/produits/mid([0-9]+)/([a-zA-Z0-9-]+)/([a-z0-9-]+)/$ index.php?module=modules/productos/productos.php&marca=$2&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/productos/mid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/productos.php&marca=$2&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/products/mid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/productos.php&marca=$2&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/produits/mid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/productos.php&marca=$2&module_js=modules/js/productos-js.php&module_seo=modules/seo/productos-seo.php&idioma=$1
+
+
+# http://www.fusterrepuestos.local/es/productos/mid198/barreiros/
+
+RewriteRule ^([a-z]+)/productos/cid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/listado-marcas.php&catpadre=$2&module_js=modules/js/listado-marcas-js.php&module_seo=modules/seo/listado-marcas-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/products/cid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/listado-marcas.php&catpadre=$2&module_js=modules/js/listado-marcas-js.php&module_seo=modules/seo/listado-marcas-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/produits/cid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/listado-marcas.php&catpadre=$2&module_js=modules/js/listado-marcas-js.php&module_seo=modules/seo/listado-marcas-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/productos/mid([0-9]+)/cid([0-9]+)/([a-z-]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/listado-productos.php&marca=$2&catpadre=$3&module_js=modules/js/listado-productos-js.php&module_seo=modules/seo/listado-productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/products/mid([0-9]+)/cid([0-9]+)/([a-z-]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/listado-productos.php&marca=$2&catpadre=$3&module_js=modules/js/listado-productos-js.php&module_seo=modules/seo/listado-productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/produits/mid([0-9]+)/cid([0-9]+)/([a-z-]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/productos/listado-productos.php&marca=$2&catpadre=$3&module_js=modules/js/listado-productos-js.php&module_seo=modules/seo/listado-productos-seo.php&idioma=$1
+
+# href="es/productos/mid'+id+'/cid'+idCategoria+'/'+marcaURL+'/'+P2URL+'/
+
+RewriteRule ^([a-z]+)/productos/mid([0-9]+)/cid([0-9]+)/pid([0-9]+)/([a-z-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9øº-]+)/$ index.php?module=modules/productos/detalle-productos.php&marca=$2&catpadre=$3&prodId=$4&module_js=modules/js/detalle-productos-js.php&module_seo=modules/seo/detalle-productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/products/mid([0-9]+)/cid([0-9]+)/pid([0-9]+)/([a-z-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9øº-]+)/$ index.php?module=modules/productos/detalle-productos.php&marca=$2&catpadre=$3&prodId=$4&module_js=modules/js/detalle-productos-js.php&module_seo=modules/seo/detalle-productos-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/produits/mid([0-9]+)/cid([0-9]+)/pid([0-9]+)/([a-z-]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9øº-]+)/$ index.php?module=modules/productos/detalle-productos.php&marca=$2&catpadre=$3&prodId=$4&module_js=modules/js/detalle-productos-js.php&module_seo=modules/seo/detalle-productos-seo.php&idioma=$1
+
+
+# ACCESORIOS
+
+RewriteRule ^([a-z]+)/productos/accesorios/$ index.php?module=modules/accesorios/accesorios.php&module_js=modules/js/accesorios-js.php&module_seo=modules/seo/accesorios-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/products/accesories/$ index.php?module=modules/accesorios/accesorios.php&module_js=modules/js/accesorios-js.php&module_seo=modules/seo/accesorios-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/produits/accessoires/$ index.php?module=modules/accesorios/accesorios.php&module_js=modules/js/accesorios-js.php&module_seo=modules/seo/accesorios-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/accesorios/cid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/accesorios/listado-accesorios.php&catpadre=$2&module_js=modules/js/listado-accesorios-js.php&module_seo=modules/seo/listado-accesorios-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/accesories/cid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/accesorios/listado-accesorios.php&catpadre=$2&module_js=modules/js/listado-accesorios-js.php&module_seo=modules/seo/listado-accesorios-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/accessoires/cid([0-9]+)/([a-zA-Z0-9-]+)/$ index.php?module=modules/accesorios/listado-accesorios.php&catpadre=$2&module_js=modules/js/listado-accesorios-js.php&module_seo=modules/seo/listado-accesorios-seo.php&idioma=$1
+
+
+RewriteRule ^([a-z]+)/accesorios/cid([0-9]+)/pid([0-9]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9øº-]+)/$ index.php?module=modules/accesorios/detalle-accesorios.php&catpadre=$2&prodId=$3&module_js=modules/js/detalle-accesorios-js.php&module_seo=modules/seo/detalle-accesorios-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/accesories/cid([0-9]+)/pid([0-9]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9øº-]+)/$ index.php?module=modules/accesorios/detalle-accesorios.php&catpadre=$2&prodId=$3&module_js=modules/js/detalle-accesorios-js.php&module_seo=modules/seo/detalle-accesorios-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/accessoires/cid([0-9]+)/pid([0-9]+)/([a-zA-Z0-9-]+)/([a-zA-Z0-9øº-]+)/$ index.php?module=modules/accesorios/detalle-accesorios.php&catpadre=$2&prodId=$3&module_js=modules/js/detalle-accesorios-js.php&module_seo=modules/seo/detalle-accesorios-seo.php&idioma=$1
+
+
+# PAGINA EMPRESA
+RewriteRule ^([a-z]+)/empresa/$ index.php?module=modules/compania/compania.php&module_js=modules/js/compania-js.php&module_seo=modules/seo/compania-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/company/$ index.php?module=modules/compania/compania.php&module_js=modules/js/compania-js.php&module_seo=modules/seo/compania-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/societe/$ index.php?module=modules/compania/compania.php&module_js=modules/js/compania-js.php&module_seo=modules/seo/compania-seo.php&idioma=$1
+
+# PAGINA PUNTOS DE VENTA
+RewriteRule ^([a-z]+)/punto-de-venta/$ index.php?module=modules/puntoVenta/punto-venta.php&module_js=modules/js/punto-venta-js.php&module_seo=modules/seo/punto-venta-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/distributors/$ index.php?module=modules/puntoVenta/punto-venta.php&module_js=modules/js/punto-venta-js.php&module_seo=modules/seo/punto-venta-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/distributeurs/$ index.php?module=modules/puntoVenta/punto-venta.php&module_js=modules/js/punto-venta-js.php&module_seo=modules/seo/punto-venta-seo.php&idioma=$1
+
+# PAGINA CONTACTO
+RewriteRule ^([a-z]+)/contacto/$ index.php?module=modules/contacto/contacto.php&module_js=modules/js/contacto-js.php&module_seo=modules/seo/contacto-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/contact/$ index.php?module=modules/contacto/contacto.php&module_js=modules/js/contacto-js.php&module_seo=modules/seo/contacto-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/contactez/$ index.php?module=modules/contacto/contacto.php&module_js=modules/js/contacto-js.php&module_seo=modules/seo/contacto-seo.php&idioma=$1
+
+# PAGINA FAQS
+RewriteRule ^([a-z]+)/faqs/$ index.php?module=modules/faqs/faqs.php&module_js=modules/js/faqs-js.php&module_seo=modules/seo/faqs-seo.php&idioma=$1
+
+# PAGINA VARIAS
+RewriteRule ^([a-z]+)/politica-privacidad/$ index.php?module=modules/legales/politica-privacidad.php&module_js=modules/js/politica-privacidad-js.php&module_seo=modules/seo/politica-privacidad-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/politica-cookies/$ index.php?module=modules/legales/politica-cookies.php&module_js=modules/js/politica-cookies-js.php&module_seo=modules/seo/politica-cookies-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/aviso-legal/$ index.php?module=modules/legales/aviso-legal.php&module_js=modules/js/aviso-legal-js.php&module_seo=modules/seo/aviso-legal-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/privacy-police/$ index.php?module=modules/legales/politica-privacidad.php&module_js=modules/js/politica-privacidad-js.php&module_seo=modules/seo/politica-privacidad-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/cookie-policy/$ index.php?module=modules/legales/politica-cookies.php&module_js=modules/js/politica-cookies-js.php&module_seo=modules/seo/politica-cookies-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/terms-service/$ index.php?module=modules/legales/aviso-legal.php&module_js=modules/js/aviso-legal-js.php&module_seo=modules/seo/aviso-legal-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/politique-confidentialite/$ index.php?module=modules/legales/politica-privacidad.php&module_js=modules/js/politica-privacidad-js.php&module_seo=modules/seo/politica-privacidad-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/cookie-politique/$ index.php?module=modules/legales/politica-cookies.php&module_js=modules/js/politica-cookies-js.php&module_seo=modules/seo/politica-cookies-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/termes-service/$ index.php?module=modules/legales/aviso-legal.php&module_js=modules/js/aviso-legal-js.php&module_seo=modules/seo/aviso-legal-seo.php&idioma=$1
+
+
+#Login
+RewriteRule ^([a-z]+)/acceso/$ index.php?module=modules/login/acceso.php&module_js=modules/js/acceso-js.php&module_seo=modules/seo/acceso-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/access/$ index.php?module=modules/login/acceso.php&module_js=modules/js/acceso-js.php&module_seo=modules/seo/acceso-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/access/$ index.php?module=modules/login/acceso.php&module_js=modules/js/acceso-js.php&module_seo=modules/seo/acceso-seo.php&idioma=$1
+
+#Cart
+RewriteRule ^([a-z]+)/carrito/$ index.php?module=modules/login/carrito.php&module_js=modules/js/carrito-js.php&module_seo=modules/seo/carrito-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/cart/$ index.php?module=modules/login/carrito.php&module_js=modules/js/carrito-js.php&module_seo=modules/seo/carrito-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/chariot/$ index.php?module=modules/login/carrito.php&module_js=modules/js/carrito-js.php&module_seo=modules/seo/carrito-seo.php&idioma=$1
+
+#Perfil
+RewriteRule ^([a-z]+)/perfil/$ index.php?module=modules/login/perfil.php&module_js=modules/js/perfil-js.php&module_seo=modules/seo/perfil-seo.php&idioma=$1
+RewriteRule ^([a-z]+)/profil/$ index.php?module=modules/login/perfil.php&module_js=modules/js/perfil-js.php&module_seo=modules/seo/perfil-seo.php&idioma=$1
+
+
+RewriteRule ^([a-zÑ-üA-Z0-9/\w\s-]+)$ convertURL.php
+
+ErrorDocument 404 /index.php

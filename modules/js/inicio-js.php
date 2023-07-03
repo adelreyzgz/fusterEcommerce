@@ -1,0 +1,342 @@
+<script>
+/*global $:true */
+
+var $ = jQuery.noConflict();
+$(document).ready(function($) {
+	"use strict";
+
+
+	var indiceActivo=-1
+
+	var c = { header: "ui-icon-circle-arrow-e", activeHeader: "ui-icon-circle-arrow-s" };
+	if (indiceActivo > -1) {
+		jQuery("#accordion").accordion({ active: indiceActivo, collapsible: !1, icons: c, heightStyle: content });
+	} else {
+		jQuery("#accordion").accordion({ active: !1, collapsible: !0, icons: c, heightStyle: content });
+	}
+
+	jQuery('#toggle-marcas').click(function(){jQuery('#acordeon-marcas').toggle();});
+	jQuery("#toggle-buscador").click(function(){jQuery("#formBusca").toggle();});
+
+	$('.flexslider').flexslider({
+		animation: "fade",
+		direction: "horizontal",
+		easing: "swing",
+		controlsContainer: $(".custom-controls-container"),
+		customDirectionNav: $(".custom-navigation a"),
+		start: function(slider){
+			$('body').removeClass('loading');
+		}
+	});
+
+	var expansible = $("#expansible-read-more");
+	expansible.click(function () {
+		var URLactual = window.location.href;
+		var texto_sl = "";
+		var regex = /es/;
+
+		if (URLactual.indexOf(regex) !== -1) {
+			texto_sl = ["Cerrar", "Seguir leyendo"];
+		}else{
+			texto_sl = ["Close", "Read More"];
+		}
+		
+		$("#mas-texto").toggle();
+		if (expansible.html() == texto_sl[0]) {
+			expansible.html(texto_sl[1]);
+			expansible.removeClass("exit-read-more");
+			expansible.addClass("seguir-leyendo");
+		} else {
+			expansible.html(texto_sl[0]);
+			expansible.removeClass("seguir-leyendo");
+			expansible.addClass("exit-read-more");
+		}
+	});
+
+
+	$.ajax({
+		method: "GET",
+		url: "<?=$base;?>000_admin/_rest/api.php?action=listarMarcasLateral"
+	}).done(function(response) {
+		if(response){
+			var data = JSON.parse(response);
+			var result = data.result;
+			var dataShow = '';
+			var dataShow2 = '';
+			var dataShow3 = '';
+			var i = 0;
+			if(data.code == 1 && result.length > 0){
+				result.forEach(function(row, index) {
+					if(row['orden'] != -1){
+						var id = row['id'];
+						var marca = row['marca'];
+						var marcaURL = cleanName(row['marca']);
+						var imagen = row['imagen'];
+
+						if(idioma == 'es'){
+							dataShow += '<li class="item-fabricante"><a href="es/productos/mid'+id+'/'+marcaURL+'/"> '+marca+' </a></li>';
+						}else if(idioma == 'fr'){
+							dataShow += '<li class="item-fabricante"><a href="fr/produits/mid'+id+'/'+marcaURL+'/"> '+marca+' </a></li>';
+						}else{
+							dataShow += '<li class="item-fabricante"><a href="en/products/mid'+id+'/'+marcaURL+'/"> '+marca+' </a></li>';
+						}
+						i++;
+
+						var classs = '';
+						if(i < 4){
+							classs = 'marcaiz';
+						}else if( i > 3 && i < 7){
+							classs = 'marcader';
+						}
+
+						if(i == 6){
+							i=0
+						}
+
+						if(idioma == 'es'){
+							dataShow3 += '\
+							<div>\
+								<a class="'+classs+'" href="es/productos/mid'+id+'/'+marcaURL+'/">\
+								<img src="assets/images/marcas/jpg/'+imagen+'.jpg">\
+								<div style="text-align: center;">\
+									<h6> '+marca+' </h6>\
+								</div>\
+								</a>\
+							</div>\
+							';
+						}else if(idioma == 'fr'){
+							dataShow3 += '\
+							<div>\
+								<a class="'+classs+'" href="fr/produits/mid'+id+'/'+marcaURL+'/">\
+								<img src="assets/images/marcas/jpg/'+imagen+'.jpg">\
+								<div style="text-align: center;">\
+									<h6> '+marca+' </h6>\
+								</div>\
+								</a>\
+							</div>\
+							';
+						}else{
+							dataShow3 += '\
+							<div>\
+								<a class="'+classs+'" href="en/products/mid'+id+'/'+marcaURL+'/">\
+								<img src="assets/images/marcas/jpg/'+imagen+'.jpg">\
+								<div style="text-align: center;">\
+									<h6> '+marca+' </h6>\
+								</div>\
+								</a>\
+							</div>\
+							';
+						}
+						
+
+					}
+
+					if(row['orden'] == -1){
+						var id = row['id'];
+						var marca = row['marca'];
+						var marcaURL = cleanName(row['marca']);
+
+						if(idioma == 'es'){
+							dataShow2 += '<li class="item-fabricante"><a href="es/productos/mid'+id+'/'+marcaURL+'/"> '+marca+' </a></li>';
+						}else if(idioma == 'fr'){
+							dataShow2 += '<li class="item-fabricante"><a href="fr/produits/mid'+id+'/'+marcaURL+'/"> '+marca+' </a></li>';
+						}else{
+							dataShow2 += '<li class="item-fabricante"><a href="en/products/mid'+id+'/'+marcaURL+'/"> '+marca+' </a></li>';
+						}
+					}
+				});
+			}
+		}
+
+		$('#lista-fabricantes').html(dataShow);
+		$('#lista-fabricantes2').html(dataShow2);
+		$('#list-tractores').html(dataShow3);
+
+		
+		$(".carruslell").slick({
+			dots: true,
+			infinite: true,
+			centerMode: true,
+			slidesToShow: 5,
+			slidesToScroll: 3,
+			responsive: [
+				{
+				breakpoint: 1200,
+				settings: {
+					slidesToShow: 2,
+					slidesToScroll: 1,
+				},
+				},
+				{
+				breakpoint: 1008,
+				settings: {
+					slidesToShow: 1,
+					slidesToScroll: 1,
+					dots: false,
+				},
+				}
+			]
+		});
+
+	}); 
+
+	$.ajax({
+		method: "GET",
+		url: "<?=$base;?>000_admin/_rest/api.php?action=listarCategoriasInicio"
+	}).done(function(response) {
+		if(response){
+			var data = JSON.parse(response);
+			var result = data.result;
+			var asientos = data.asientos;
+			console.log(result)
+			var dataShow = '';
+			var cant = 0;
+			if(data.code == 1 && result.length > 0){
+				result.forEach(function(row, index) {
+					if(cant % 5 == 0){
+						dataShow += '<div class="masonryColumnBis">';
+					}
+						cant++;
+						var nombre = row.nbPadre;
+						var hijos = row.hijos;
+						var imgPadre = row.imgPadre;
+						var idP = row.idPadre;
+
+						dataShow += '\
+							<li class="producto-item">\
+								<div class="miniatura-item">\
+									<img\
+										src="assets/images/categorias/'+imgPadre+'.png"\
+										alt="..."\
+										title="..."\
+										width="100"\
+										height="86"\
+									/>\
+									<h3  style="font-weight: 700;">'+nombre+'</h3>\
+								</div>\
+								<ul>';
+								hijos.forEach(function(row2, index2) {
+									var nombreHijo = row2.nombre;
+									var cantidadHijo = row2.cantidad;
+									var idHijo = row2.id;
+									var nombreHijoURL = cleanName(nombreHijo);
+
+									if(idioma == 'es'){
+										dataShow += '\
+										<li>\
+											<div class="product-category"><a href="es/productos/cid'+idHijo+'/'+nombreHijoURL+'/">'+nombreHijo+'</a><span>'+cantidadHijo+'</span></div>\
+										</li>';
+									}else if(idioma == 'fr'){
+										dataShow += '\
+										<li>\
+											<div class="product-category"><a href="fr/produits/cid'+idHijo+'/'+nombreHijoURL+'/">'+nombreHijo+'</a><span>'+cantidadHijo+'</span></div>\
+										</li>';
+									}else{
+										dataShow += '\
+										<li>\
+											<div class="product-category"><a href="en/products/cid'+idHijo+'/'+nombreHijoURL+'/">'+nombreHijo+'</a><span>'+cantidadHijo+'</span></div>\
+										</li>';
+									}
+								});
+
+								if(idioma == 'es'){
+									if(idP == 11){
+										dataShow += '\
+										<li>\
+											<div class="product-category">Asientos</div>\
+											<ul style="margin-top: 7px;margin-bottom: 7px;">\
+												\
+												<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+													<label for="item-2-0" style="font-weight: 400;">\
+													<a href="es/productos/cid10322/asientos-mecanicos/">Asientos mecánicos</a></label>\
+													<span>'+asientos[0]+'</span>\
+												</li>\
+												<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+													<label for="item-2-0" style="font-weight: 400;">\
+													<a href="es/productos/cid10323/asientos-neumaticos/">Asientos neumáticos</a></label>\
+													<span>'+asientos[1]+'</span>\
+												</li>\
+												<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+													<label for="item-2-0" style="font-weight: 400;">\
+													<a href="es/productos/cid10324/despiece-asientos/">Despiece asientos</a></label>\
+													<span>'+asientos[2]+'</span>\
+												</li>\
+											</ul>\
+											\
+										</li>';
+									}
+								}else{
+									if(idioma == 'en'){
+										if(idP == 11){
+											dataShow += '\
+											<li>\
+												<div class="product-category">Seat</div>\
+												<ul style="margin-top: 7px;margin-bottom: 7px;">\
+													\
+													<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+														<label for="item-2-0" style="font-weight: 400;">\
+														<a href="en/products/cid10322/mechanical-seats/">Mechanical seats</a></label>\
+														<span>'+asientos[0]+'</span>\
+													</li>\
+													<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+														<label for="item-2-0" style="font-weight: 400;">\
+														<a href="en/products/cid10323/pneumatic-seats/">Pneumatic seats</a></label>\
+														<span>'+asientos[1]+'</span>\
+													</li>\
+													<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+														<label for="item-2-0" style="font-weight: 400;">\
+														<a href="en/products/cid10324/seat-components/">Seat components</a></label>\
+														<span>'+asientos[2]+'</span>\
+													</li>\
+												</ul>\
+												\
+											</li>';
+										}
+									}
+									
+									if(idioma == 'fr'){
+										if(idP == 11){
+											dataShow += '\
+											<li>\
+												<div class="product-category">Seat</div>\
+												<ul style="margin-top: 7px;margin-bottom: 7px;">\
+													\
+													<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+														<label for="item-2-0" style="font-weight: 400;">\
+														<a href="fr/produits/cid10322/sieges-mecaniques/">Sièges mécaniques</a></label>\
+														<span>'+asientos[0]+'</span>\
+													</li>\
+													<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+														<label for="item-2-0" style="font-weight: 400;">\
+														<a href="fr/produits/cid10323/sieges-pneumatiques/">Sièges pneumatiques</a></label>\
+														<span>'+asientos[1]+'</span>\
+													</li>\
+													<li class="group"  style="margin-right: 0px;display: flex;align-items: center;">\
+														<label for="item-2-0" style="font-weight: 400;">\
+														<a href="fr/produits/cid10324/composants-siege/">Composants du siège</a></label>\
+														<span>'+asientos[2]+'</span>\
+													</li>\
+												</ul>\
+												\
+											</li>';
+										}
+									}
+								}
+							dataShow += '\
+								</ul>\
+							</li>';
+					if(cant % 4 == 0){
+						dataShow += '</div>';
+						cant=0;
+					}
+				});
+
+				$('#listadoCategorias').html(dataShow);
+
+				cant=0;
+				jQuery(".block__title.block-title").click(function () { jQuery("#accordion").toggle(); });
+			}
+		}
+	});
+});
+</script>

@@ -1,0 +1,9 @@
+.divCarrito,
+.precioProductos {
+    display: initial;
+}
+
+
+.filters th:last-child input {
+    display: none
+}
