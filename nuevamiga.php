@@ -50,7 +50,7 @@ if(  isset($_GET['module']) && (
    )) {
    $ruta = '<a href="'.$idioma.'/'.$productosURL.'/'.$accesoriosURL.'/" title="'.$accesoriosTitle.'">'.$accesoriosTitle.'</a>';
    $titleHead = $accesoriosTitle;
-
+   $rutaProd = '';
    if($rutaCategoria != ''){
         if(isset($_GET['prodId']) && $_GET['prodId']){
             $prodId = $_GET['prodId'];

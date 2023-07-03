@@ -92,223 +92,296 @@ $(document).ready(function($) {
 				var p = 0;
 				if(data.code == 1 && result.length > 0){
 
-					result.forEach(function(row, index) {
-						var id = row['id'];
-						var nombre = row['nombre'];
-						$.ajax({
-							method: "GET",
-							url: "<?=$base;?>000_admin/_rest/api.php?action=listarCaractByIdAccesorio&cat="+idCategoria+"&idProd="+id
-						}).done(function(response) {
-							if(response){
-								p++;
-								var data = JSON.parse(response);
-								row.refOems = data.refOems;
-								row.caract = data.caract;
-								arrayData.push(row);
+					var access_token = localStorage.getItem("access_token_fuster");
+					if(access_token){
+						// INICIO INTERCEPTOR
+						console.log('INICIO INTERCEPTOR')
+						var arrayRefFusterI = '';
 
-								if(p == result.length){
-									var dataShowRefOem = '';
-									var dataShowCaract = '';
-									var dataShow3 = '';
-									var tipodisplay = 'display: initial;';
+						for (let index = 0; index < result.length; index++) {
+							const element = result[index];
 
-									if(arrayData){
-										// ORGANIZAR ARRAY
-										function SortArray(x, y){
-											if (x.nombre < y.nombre) {return -1;}
-											if (x.nombre > y.nombre) {return 1;}
-											return 0;
+							if(!index){
+								arrayRefFusterI += '[';
+							}
+
+							arrayRefFusterI += '"'+element.noRefFuster+'"';
+							
+							if(index < (result.length-1)){
+								arrayRefFusterI += ',';
+							}
+
+							if(index == (result.length-1)){
+								arrayRefFusterI += ']';
+							}
+						}
+
+						if(arrayRefFusterI){
+							$.ajax({
+								method: "GET",
+								headers: {
+									"Authorization": "Bearer " + access_token
+								},
+								url: 'https://apiecommercefuster.ideaconsulting.es/api/articles?codArticles='+arrayRefFusterI
+							}).done(function(response) {
+								// INICIO REQUEST INTERCEPTOR
+									var responseERP = response.data;
+									for (let i = 0; i < responseERP.length; i++) {
+										const respElement = responseERP[i];
+										for (let j = 0; j < result.length; j++) {
+											const element = result[j];
+											if(respElement.CodArticle == element.noRefFuster){
+												result[j].IDArticle = respElement.IDArticle;
+												result[j].Price = Math.round(respElement.Price);
+												result[j].Stock = Math.round(respElement.Stock);
+											}
 										}
-										arrayData = arrayData.sort(SortArray);
+									}
 
-										/* datos es la variable donde va informacon  */
-										var datos = arrayData;
-										var categorias= [];
-										var temporales= [];
-										var retorno=[];
+									// OBJETO MODIFICADO CON DATOS DEL ERP
+									console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+									console.log('--------------')
+									// --------------
 
-										for(var i=0;i<datos.length;i++){
-											let name=removeAccents(datos[i].nombre);
-											let indice = name.indexOf(" ");
-											if(indice >- 1){
-											var catTemp = name.substring(0, indice);
-											}else{
-											var catTemp = name;
+									logicaOld(result);
+
+									// --------------
+
+								// FIN REQUEST INTERCEPTOR
+							}).fail(function(response) {
+								console.log(response);
+							});
+						}
+					}else{
+						logicaOld(result);
+					}
+					// FIN INTERCEPTOR
+
+					function logicaOld(result){
+						result.forEach(function(row, index) {
+							var id = row['id'];
+							var nombre = row['nombre'];
+							$.ajax({
+								method: "GET",
+								url: "<?=$base;?>000_admin/_rest/api.php?action=listarCaractByIdAccesorio&cat="+idCategoria+"&idProd="+id
+							}).done(function(response) {
+								if(response){
+									p++;
+									var data = JSON.parse(response);
+									row.refOems = data.refOems;
+									row.caract = data.caract;
+									arrayData.push(row);
+
+									if(p == result.length){
+										var dataShowRefOem = '';
+										var dataShowCaract = '';
+										var dataShow3 = '';
+										var tipodisplay = 'display: initial;';
+
+										if(arrayData){
+											// ORGANIZAR ARRAY
+											function SortArray(x, y){
+												if (x.nombre < y.nombre) {return -1;}
+												if (x.nombre > y.nombre) {return 1;}
+												return 0;
 											}
-											var idCat = -1;
-											for(var j=0;j<categorias.length;j++){
-											if(categorias[j].nameCat==catTemp){
-												idCat=categorias[j].id;
-											}
-											}
-											if(idCat>-1){
-											var elemento=[];
-											elemento=retorno[idCat].element;
-											elemento.push(datos[i]);
-											retorno[idCat].element=elemento;
-											}else{
-											if(temporales.length>=1){
-												var contador = 1;
-												var locojio = false;
-												for(var k=0;k<temporales.length;k++){
-												if(temporales[k].nombre==catTemp){
+											arrayData = arrayData.sort(SortArray);
+
+											/* datos es la variable donde va informacon  */
+											var datos = arrayData;
+											var categorias= [];
+											var temporales= [];
+											var retorno=[];
+
+											for(var i=0;i<datos.length;i++){
+												let name=removeAccents(datos[i].nombre);
+												let indice = name.indexOf(" ");
+												if(indice >- 1){
+												var catTemp = name.substring(0, indice);
+												}else{
+												var catTemp = name;
+												}
+												var idCat = -1;
+												for(var j=0;j<categorias.length;j++){
+												if(categorias[j].nameCat==catTemp){
+													idCat=categorias[j].id;
+												}
+												}
+												if(idCat>-1){
+												var elemento=[];
+												elemento=retorno[idCat].element;
+												elemento.push(datos[i]);
+												retorno[idCat].element=elemento;
+												}else{
+												if(temporales.length>=1){
+													var contador = 1;
+													var locojio = false;
+													for(var k=0;k<temporales.length;k++){
+													if(temporales[k].nombre==catTemp){
+														var arrayNewDatos=[];
+														arrayNewDatos.push(temporales[k].element);
+														arrayNewDatos.push(datos[i]);
+														var jsonnewElemet={
+														"nombre":catTemp,
+														"element":arrayNewDatos
+														}
+														retorno.push(jsonnewElemet);
+														let indiceCat=retorno.length-1;
+														var jsonnewElemetCateE={
+														"nameCat":catTemp,
+														"id":indiceCat
+														}
+														categorias.push(jsonnewElemetCateE);
+													
+														var auxArray=[];
+														for(var z=0;z<temporales.length;z++){
+														if(temporales[z].nombre!=catTemp){
+															auxArray.push(temporales[z])
+
+														}
+														}
+														temporales=auxArray;
+														locojio = true;
+													}
+													}
+													if(!locojio){
 													var arrayNewDatos=[];
-													arrayNewDatos.push(temporales[k].element);
 													arrayNewDatos.push(datos[i]);
 													var jsonnewElemet={
-													"nombre":catTemp,
-													"element":arrayNewDatos
+														"nombre":catTemp,
+														"element":datos[i]
 													}
-													retorno.push(jsonnewElemet);
-													let indiceCat=retorno.length-1;
-													var jsonnewElemetCateE={
-													"nameCat":catTemp,
-													"id":indiceCat
+													temporales.push(jsonnewElemet)
+													
 													}
-													categorias.push(jsonnewElemetCateE);
-												
-													var auxArray=[];
-													for(var z=0;z<temporales.length;z++){
-													if(temporales[z].nombre!=catTemp){
-														auxArray.push(temporales[z])
-
-													}
-													}
-													temporales=auxArray;
-													locojio = true;
-												}
-												}
-												if(!locojio){
-												var arrayNewDatos=[];
-												arrayNewDatos.push(datos[i]);
-												var jsonnewElemet={
+												}else{
+													var jsonnewElemet={
 													"nombre":catTemp,
 													"element":datos[i]
+													}
+													temporales.push(jsonnewElemet);
 												}
-												temporales.push(jsonnewElemet)
-												
+												var cont=datos.length-1
+												}
+												if(i==datos.length-1){
+												for(var a=0;a<temporales.length;a++){
+													var nameT=temporales[a].nombre
+													var lemen=[];
+													lemen.push(temporales[a].element)
+													
+													var exist=1;
+													for(var b=0;b<retorno.length;b++){
+													if(nameT==retorno[b].nombre){
+														exist=2;
+													}
+													
+													}
+													if(exist==1){
+													var jsonnewElemetTU={
+														"nombre":nameT,
+														"element":lemen
+													}
+													retorno.push(jsonnewElemetTU)
+													}
+												}
+												}
+
+											}
+											/* FIN CODE DIANA */  
+
+											var unosolo = '';
+											if(retorno.length > 1){
+												if(idioma == 'en'){
+													$('#listadoIdent').append("<div class='btnFiltroProd btnFiltroProdAtv' data-id='all'>All</div>");
+												}else if(idioma == 'fr'){
+													$('#listadoIdent').append("<div class='btnFiltroProd btnFiltroProdAtv' data-id='all'>Tout</div>");
+												}else{
+													$('#listadoIdent').append("<div class='btnFiltroProd btnFiltroProdAtv' data-id='all'>Todos</div>");
 												}
 											}else{
-												var jsonnewElemet={
-												"nombre":catTemp,
-												"element":datos[i]
-												}
-												temporales.push(jsonnewElemet);
+												unosolo = 'btnFiltroProdAtv';
 											}
-											var cont=datos.length-1
-											}
-											if(i==datos.length-1){
-											for(var a=0;a<temporales.length;a++){
-												var nameT=temporales[a].nombre
-												var lemen=[];
-												lemen.push(temporales[a].element)
-												
-												var exist=1;
-												for(var b=0;b<retorno.length;b++){
-												if(nameT==retorno[b].nombre){
-													exist=2;
+
+											for (let index = 0; index < retorno.length; index++) {
+												arrayData = retorno[index].element;
+												var identificador = retorno[index].nombre;
+												var identificadorClean = cleanName(identificador);
+
+												if(arrayData.length > 0){
+													$('#listadoIdent').append("<div class='btnFiltroProd "+unosolo+"' data-id='"+identificadorClean+"'>"+identificador+"</div>");
 												}
 												
-												}
-												if(exist==1){
-												var jsonnewElemetTU={
-													"nombre":nameT,
-													"element":lemen
-												}
-												retorno.push(jsonnewElemetTU)
-												}
-											}
-											}
+												arrayData.forEach(function(row, index) {
+													var resultRefOemById = row.refOems;
+													var resultCaractId = row.caract;
+													dataShowCaract = '';
+													
+													var j = 0;
+													if(resultCaractId != '-'){
+														tipodisplay = 'display: inline-table;';
+														resultCaractId.forEach(function(row2, index2) {
+															j++;
+															if(j==resultCaractId.length){
+																dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia"></span></div>';
+															}else{
+																dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia">|</span></div>';
+															}
+														});
+													}
 
-										}
-										/* FIN CODE DIANA */  
+													var nombreUrl = cleanName(row["nombre"]);
+													var nombreCategoria = (path.split('/'))[4];
+													var idCat = path.match(/\/cid([0-9]+)\//).pop();
+													var idp = row["id"];
+																														
+													var imgProd = "assets/images/default.png";
+													if(row['thumbnails']){
+														imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
+													}
 
-										var unosolo = '';
-										if(retorno.length > 1){
-											if(idioma == 'en'){
-												$('#listadoIdent').append("<div class='btnFiltroProd btnFiltroProdAtv' data-id='all'>All</div>");
-											}else if(idioma == 'fr'){
-												$('#listadoIdent').append("<div class='btnFiltroProd btnFiltroProdAtv' data-id='all'>Tout</div>");
-											}else{
-												$('#listadoIdent').append("<div class='btnFiltroProd btnFiltroProdAtv' data-id='all'>Todos</div>");
-											}
-										}else{
-											unosolo = 'btnFiltroProdAtv';
-										}
-
-										for (let index = 0; index < retorno.length; index++) {
-											arrayData = retorno[index].element;
-											var identificador = retorno[index].nombre;
-											var identificadorClean = cleanName(identificador);
-
-											if(arrayData.length > 0){
-												$('#listadoIdent').append("<div class='btnFiltroProd "+unosolo+"' data-id='"+identificadorClean+"'>"+identificador+"</div>");
-											}
-											
-											arrayData.forEach(function(row, index) {
-												var resultRefOemById = row.refOems;
-												var resultCaractId = row.caract;
-												dataShowCaract = '';
-												
-												var j = 0;
-												if(resultCaractId != '-'){
-													tipodisplay = 'display: inline-table;';
-													resultCaractId.forEach(function(row2, index2) {
-														j++;
-														if(j==resultCaractId.length){
-															dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia"></span></div>';
-														}else{
-															dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia">|</span></div>';
-														}
-													});
-												}
-
-												var nombreUrl = cleanName(row["nombre"]);
-												var nombreCategoria = (path.split('/'))[4];
-												var idCat = path.match(/\/cid([0-9]+)\//).pop();
-												var idp = row["id"];
-																													
-												var imgProd = "assets/images/default.png";
-												if(row['thumbnails']){
-													imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
-												}
-
-												dataShow3 += '\
-												<div id="producto---" class="views-row views-row-'+p+' all '+identificadorClean+'">\
-													<div class="field-content"></div>\
-													<div class="bloque-imagen">\
-														<div class="imagen-producto">\
-															<img src="'+imgProd+'" alt="'+nombreUrl+'" title="'+nombreUrl+'" />\
+													dataShow3 += '\
+													<div id="producto---" class="views-row views-row-'+p+' all '+identificadorClean+'">\
+														<div class="field-content"></div>\
+														<div class="bloque-imagen">\
+															<div class="imagen-producto">\
+																<img src="'+imgProd+'" alt="'+nombreUrl+'" title="'+nombreUrl+'" />\
+															</div>\
+														</div>\
+														<div class="bloque_detalle">\
+															<div class="field-content">\
+																<h4 class="titulo-producto">\
+																	<a href="'+idioma+'/'+palabra1+'/cid'+idCat+'/pid'+idp+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
+																	<span class="precioProductos">  Precio: '+row["Price"]+'€ </span>\
+																</h4>\
+															</div>\
+															<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
+															<div class="field-items">\
+															<div class="field-item even" style="'+tipodisplay+'">'+dataShowCaract+'</div>\
+															</div>\
+															<div class="divCarrito">\
+																<span class="cantLetter"> Cant. </span><input min="0" max="50" type="number" value="0" name="precio" class="inputPrecio">\
+																<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
+																data-refFuster='+row["noRefFuster"]+'  \
+																data-idarticle='+row["IDArticle"]+'\
+																data-price='+row["Price"]+'\
+																data-stock='+row["Stock"]+'\
+																data-img='+imgProd+'\
+																data-idProd='+idp+'> Añadir al Carrito </a>\
+															</div>\
 														</div>\
 													</div>\
-													<div class="bloque_detalle">\
-														<div class="field-content">\
-															<h4 class="titulo-producto">\
-																<a href="'+idioma+'/'+palabra1+'/cid'+idCat+'/pid'+idp+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
-																<span class="precioProductos">   </span>\
-															</h4>\
-														</div>\
-														<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
-														<div class="field-items">\
-														<div class="field-item even" style="'+tipodisplay+'">'+dataShowCaract+'</div>\
-														</div>\
-														<div class="divCarrito">\
-															<span class="cantLetter"> Cant. </span><input type="number" name="precio" value="1" class="inputPrecio">\
-															<a href="#" class="addCarrito"  data-refFuster='+row["noRefFuster"]+'> Añadir al Carrito </a>\
-														</div>\
-													</div>\
-												</div>\
-												';
-												
-											});
+													';
+													
+												});
 
+											}
+											$('#listadoAccesorios').html(dataShow3);
 										}
-										$('#listadoAccesorios').html(dataShow3);
 									}
 								}
-							}
+							});
 						});
-					});
+					}
 				
 				}
 			}
@@ -534,201 +607,260 @@ $(document).ready(function($) {
 				var data = JSON.parse(response);
 				var result = data.result;
 				if(result){
-					result.forEach(function(row, index) {
-						var id = row['id'];
-						var nombre = row['nombre'];
-						var noRefFuster = row['noRefFuster'];
+					
+					var access_token = localStorage.getItem("access_token_fuster");
+					if(access_token){
+						// INICIO INTERCEPTOR
+						console.log('INICIO INTERCEPTOR')
+						var arrayRefFusterI = '';
 
-						var nombreUrl = cleanName(row["nombre"]);
-						var nombreCategoria = (path.split('/'))[4];
-						var idCat = path.match(/\/cid([0-9]+)\//).pop();
-						var idp = row["id"];
+						for (let index = 0; index < result.length; index++) {
+							const element = result[index];
 
-						
-						
-						var imgProd = "assets/images/default.png";
-						if(row['thumbnails']){
-							imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
+							if(!index){
+								arrayRefFusterI += '[';
+							}
+
+							arrayRefFusterI += '"'+element.noRefFuster+'"';
+							
+							if(index < (result.length-1)){
+								arrayRefFusterI += ',';
+							}
+
+							if(index == (result.length-1)){
+								arrayRefFusterI += ']';
+							}
 						}
 
-						$.ajax({
-							method: "GET",
-							url: "<?=$base;?>000_admin/_rest/api.php?action=listarCaractByIdAccesorio&cat="+idCategoria+"&idProd="+id
-						}).done(function(response) {
-							if(response){
-								p++;
-								var data = JSON.parse(response);
-
-								var caractElementAuxD = data.caract;
-
-								var arrayAuxF=[];
-								if(data.caract=="-"){
-									for (let ss = 0; ss < cantidadCol; ss++) {
-										arrayAuxF.push("_");
-									}
-								
-									if (ordenColOrde1>=1) {
-										arraycol1.push("_");
-									}
-
-									if (ordenColOrde2>=1) {
-										arraycol2.push("_");
+						if(arrayRefFusterI){
+							$.ajax({
+								method: "GET",
+								headers: {
+									"Authorization": "Bearer " + access_token
+								},
+								url: 'https://apiecommercefuster.ideaconsulting.es/api/articles?codArticles='+arrayRefFusterI
+							}).done(function(response) {
+								// INICIO REQUEST INTERCEPTOR
+									var responseERP = response.data;
+									for (let i = 0; i < responseERP.length; i++) {
+										const respElement = responseERP[i];
+										for (let j = 0; j < result.length; j++) {
+											const element = result[j];
+											if(respElement.CodArticle == element.noRefFuster){
+												result[j].IDArticle = respElement.IDArticle;
+												result[j].Price = Math.round(respElement.Price);
+												result[j].Stock = Math.round(respElement.Stock);
+											}
+										}
 									}
 
+									// OBJETO MODIFICADO CON DATOS DEL ERP
+									console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+									console.log('--------------')
+									// --------------
+
+									logicaOld(result);
+
+									// --------------
+
+								// FIN REQUEST INTERCEPTOR
+							}).fail(function(response) {
+								console.log(response);
+							});
+						}
+					}else{
+						logicaOld(result);
+					}
+					// FIN INTERCEPTOR
+
+					function logicaOld(result){
+						result.forEach(function(row, index) {
+							var id = row['id'];
+							var nombre = row['nombre'];
+							var noRefFuster = row['noRefFuster'];
+							var price = row['Price'];
+							var stock = row['Stock'];
+							var IDArticle = row['IDArticle'];
+
+							var nombreUrl = cleanName(row["nombre"]);
+							var nombreCategoria = (path.split('/'))[4];
+							var idCat = path.match(/\/cid([0-9]+)\//).pop();
+							var idp = row["id"];
+
+							
+							
+							var imgProd = "assets/images/default.png";
+							if(row['thumbnails']){
+								imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
+							}
+
+							$.ajax({
+								method: "GET",
+								url: "<?=$base;?>000_admin/_rest/api.php?action=listarCaractByIdAccesorio&cat="+idCategoria+"&idProd="+id
+							}).done(function(response) {
+								if(response){
+									p++;
+									var data = JSON.parse(response);
+
+									var caractElementAuxD = data.caract;
+
+									var arrayAuxF=[];
+									if(data.caract=="-"){
+										for (let ss = 0; ss < cantidadCol; ss++) {
+											arrayAuxF.push("_");
+										}
 									
-								}else{
-									var cont1 = 0;
-									var cont2 = 0;
-
-									for (let k = 0; k < caractElementAuxD.length; k++) {
-										
-										arrayAuxF.push(caractElementAuxD[k])
-
 										if (ordenColOrde1>=1) {
-											if(parseInt(caractElementAuxD[k].id)==parseInt(idElementoOrden[0])){
-										        cont1 = 1;
-												arraycol1.push(caractElementAuxD[k].valor)
+											arraycol1.push("_");
+										}
 
-											}else if(parseInt(caractElementAuxD[k].id)==parseInt(idElementoOrden[1])){
-												cont2 = 1;
-												arraycol2.push(caractElementAuxD[k].valor)
+										if (ordenColOrde2>=1) {
+											arraycol2.push("_");
+										}
+
+										
+									}else{
+										var cont1 = 0;
+										var cont2 = 0;
+
+										for (let k = 0; k < caractElementAuxD.length; k++) {
+											
+											arrayAuxF.push(caractElementAuxD[k])
+
+											if (ordenColOrde1>=1) {
+												if(parseInt(caractElementAuxD[k].id)==parseInt(idElementoOrden[0])){
+													cont1 = 1;
+													arraycol1.push(caractElementAuxD[k].valor)
+
+												}else if(parseInt(caractElementAuxD[k].id)==parseInt(idElementoOrden[1])){
+													cont2 = 1;
+													arraycol2.push(caractElementAuxD[k].valor)
+												}
+											}
+											
+										}
+
+										if(!cont1){
+											arraycol1.push('-');
+										}
+
+										if(!cont2){
+											arraycol2.push('-');
+										}
+									}
+
+									var objectInfo = {
+										nombre: nombre,
+										noRefFuster: noRefFuster,
+										nombreUrl: nombreUrl,
+										nombreCategoria: nombreCategoria,
+										idCat: idCat,
+										idp: idp,
+										id: id,
+										imgProd: imgProd,
+										price: price,
+										stock: stock,
+										IDArticle: IDArticle
+									}
+
+									datosReferencia.push(objectInfo);
+									
+									
+									arraytd.push(arrayAuxF);
+									
+									
+
+									if(p == result.length){
+
+										for (let w = 0; w < arraycol1.length; w++) {
+											for (let q = w+1; q < arraycol1.length; q++) {
+												var tipoOrdenFC1=ordenColOrde1;
+												var tipoOrdenFC2=ordenColOrde2;
+												var comparacion=compararElementos(arraycol1[w],arraycol1[q],tipoOrdenFC1);
+												if( comparacion==2){
+													var elementTd=arraytd[q];
+													var paux1=arraycol1[q];
+
+													var paux2=arraycol2[q];
+													var datosRaux=datosReferencia[q];
+													datosReferencia[q] = datosReferencia[w];
+													datosReferencia[w] = datosRaux;
+													
+													arraytd[q] = arraytd[w];
+													arraytd[w] = elementTd;
+
+													arraycol1[q] = arraycol1[w];
+													arraycol1[w] = paux1;
+													
+													arraycol2[q] = arraycol2[w];
+													arraycol2[w] = paux2;
+
+
+
+												}else if( comparacion==3){
+													if (ordenColOrde2>=1) {
+
+														var comparacion1=compararElementos(arraycol2[w],arraycol2[q],tipoOrdenFC2);
+
+														if( comparacion1==2){
+															var elementTd=arraytd[q];
+															var paux1=arraycol1[q];
+															var paux2=arraycol2[q];
+															var datosRaux=datosReferencia[q];
+															datosReferencia[q] = datosReferencia[w];
+															datosReferencia[w] = datosRaux;
+															arraytd[q] = arraytd[w];
+															arraytd[w] = elementTd;
+															arraycol1[q] = arraycol1[w];
+															arraycol1[w] = paux1;
+															arraycol2[q] = arraycol2[w];
+															arraycol2[w] = paux2;
+
+														}
+													}
+												
+												}
+
 											}
 										}
 										
-									}
+										
+																	
+										
+										for (let index99 = 0; index99 < arraytd.length; index99++) {
+											var caractElement = [];
+											var listadoCaracteristicas = '';
+											caractElement = arraytd[index99];
 
-									if(!cont1){
-										arraycol1.push('-');
-									}
+											for (let i = 0; i < ordenCaracteristicas.length; i++) {
+												const orden = ordenCaracteristicas[i];
+												var encontro = false;
 
-									if(!cont2){
-										arraycol2.push('-');
-									}
-								}
+												for (let j = 0; j < caractElement.length; j++) {
+													
+													if(caractElement[j].id == orden){
+														var valorCaract = caractElement[j].valor;
+														var id = caractElement[j].id;
 
-								var objectInfo = {
-									nombre: nombre,
-									noRefFuster: noRefFuster,
-									nombreUrl: nombreUrl,
-									nombreCategoria: nombreCategoria,
-									idCat: idCat,
-									idp: idp,
-									id: id,
-									imgProd: imgProd
-								}
-
-								datosReferencia.push(objectInfo);
-								
-								
-								arraytd.push(arrayAuxF);
-								
-								
-
-								if(p == result.length){
-
-									for (let w = 0; w < arraycol1.length; w++) {
-										for (let q = w+1; q < arraycol1.length; q++) {
-											var tipoOrdenFC1=ordenColOrde1;
-											var tipoOrdenFC2=ordenColOrde2;
-											var comparacion=compararElementos(arraycol1[w],arraycol1[q],tipoOrdenFC1);
-											if( comparacion==2){
-												var elementTd=arraytd[q];
-												var paux1=arraycol1[q];
-
-												var paux2=arraycol2[q];
-												var datosRaux=datosReferencia[q];
-												datosReferencia[q] = datosReferencia[w];
-												datosReferencia[w] = datosRaux;
-												
-												arraytd[q] = arraytd[w];
-												arraytd[w] = elementTd;
-
-												arraycol1[q] = arraycol1[w];
-												arraycol1[w] = paux1;
-												
-												arraycol2[q] = arraycol2[w];
-												arraycol2[w] = paux2;
-
-
-
-											}else if( comparacion==3){
-												if (ordenColOrde2>=1) {
-
-													var comparacion1=compararElementos(arraycol2[w],arraycol2[q],tipoOrdenFC2);
-
-													if( comparacion1==2){
-														var elementTd=arraytd[q];
-														var paux1=arraycol1[q];
-														var paux2=arraycol2[q];
-														var datosRaux=datosReferencia[q];
-														datosReferencia[q] = datosReferencia[w];
-														datosReferencia[w] = datosRaux;
-														arraytd[q] = arraytd[w];
-														arraytd[w] = elementTd;
-														arraycol1[q] = arraycol1[w];
-														arraycol1[w] = paux1;
-														arraycol2[q] = arraycol2[w];
-														arraycol2[w] = paux2;
-
-													}
-												}
-											
-											}
-
-										}
-									}
-									
-									
-																
-									
-									for (let index99 = 0; index99 < arraytd.length; index99++) {
-										var caractElement = [];
-										var listadoCaracteristicas = '';
-										caractElement = arraytd[index99];
-
-										for (let i = 0; i < ordenCaracteristicas.length; i++) {
-											const orden = ordenCaracteristicas[i];
-											var encontro = false;
-
-											for (let j = 0; j < caractElement.length; j++) {
-												
-												if(caractElement[j].id == orden){
-													var valorCaract = caractElement[j].valor;
-													var id = caractElement[j].id;
-
-													if($.inArray(valorCaract, arrayPadres['id_'+id]) < 0){
-														arrayPadres['id_'+id].push(valorCaract);
-													}
-													var AuxTDL=valorCaract;
-													var cantDTA = 0;
-													for (let l = 0; l < valorCaract.length; l++) {
-														if(!isNaN(valorCaract[l]) || valorCaract[l] == ','  || valorCaract[l] == '.'){
-															cantDTA++;
+														if($.inArray(valorCaract, arrayPadres['id_'+id]) < 0){
+															arrayPadres['id_'+id].push(valorCaract);
 														}
-													}
-													var total12D = parseFloat(valorCaract.length);
-													if(cantDTA == total12D){
-														var a = valorCaract.split(',');
-
-														if(a.length > 1){
-															valorCaract=a[0]+'.'+a[1];
+														var AuxTDL=valorCaract;
+														var cantDTA = 0;
+														for (let l = 0; l < valorCaract.length; l++) {
+															if(!isNaN(valorCaract[l]) || valorCaract[l] == ','  || valorCaract[l] == '.'){
+																cantDTA++;
+															}
 														}
-													}
+														var total12D = parseFloat(valorCaract.length);
+														if(cantDTA == total12D){
+															var a = valorCaract.split(',');
 
-													var refLimpio = datosReferencia[index99].noRefFuster;
-													refLimpio = refLimpio.replace('/','barra');
-													refLimpio = refLimpio.replace(' ','espacio');
-													refLimpio = refLimpio.replace('.','punto');
-													refLimpio = refLimpio.replace('#','num');
-													refLimpio = refLimpio.replace(',','com');
+															if(a.length > 1){
+																valorCaract=a[0]+'.'+a[1];
+															}
+														}
 
-													listadoCaracteristicas += `<td class='tecni idC`+caractElement[j].id+`  `+refLimpio+`   ' data-value='`+valorCaract+`'  data-id='`+refLimpio+`'>`+valorCaract+`</td>`;
-													encontro = true;
-												}
-
-												if(j == caractElement.length-1){
-													if(!encontro)
-													{
 														var refLimpio = datosReferencia[index99].noRefFuster;
 														refLimpio = refLimpio.replace('/','barra');
 														refLimpio = refLimpio.replace(' ','espacio');
@@ -736,152 +868,186 @@ $(document).ready(function($) {
 														refLimpio = refLimpio.replace('#','num');
 														refLimpio = refLimpio.replace(',','com');
 
-														listadoCaracteristicas += `<td class='tecni idC-' data-value='-'  data-id='`+refLimpio+`'>-</td>`;
+														listadoCaracteristicas += `<td class='tecni idC`+caractElement[j].id+`  `+refLimpio+`   ' data-value='`+valorCaract+`'  data-id='`+refLimpio+`'>`+valorCaract+`</td>`;
+														encontro = true;
+													}
+
+													if(j == caractElement.length-1){
+														if(!encontro)
+														{
+															var refLimpio = datosReferencia[index99].noRefFuster;
+															refLimpio = refLimpio.replace('/','barra');
+															refLimpio = refLimpio.replace(' ','espacio');
+															refLimpio = refLimpio.replace('.','punto');
+															refLimpio = refLimpio.replace('#','num');
+															refLimpio = refLimpio.replace(',','com');
+
+															listadoCaracteristicas += `<td class='tecni idC-' data-value='-'  data-id='`+refLimpio+`'>-</td>`;
+														}
+													}
+												}
+
+
+											}
+
+											var refLimpio = datosReferencia[index99].noRefFuster;
+											refLimpio = refLimpio.replace('/','barra');
+											refLimpio = refLimpio.replace(' ','espacio');
+											refLimpio = refLimpio.replace('.','punto');
+											refLimpio = refLimpio.replace('#','num');
+											refLimpio = refLimpio.replace(',','com');
+
+											var pre = '';
+											var car = '';
+											if(localStorage.getItem("userLogged") != "-" && localStorage.getItem("userToken") != "-"){
+												pre = '<td class="precio">\
+													<span class="precioProductos" style="font-size: 12px;">'+datosReferencia[index99].price+'€ </span>\
+												</td>';
+
+												car = '<td class="carrito">\
+													<div class="divCarrito">\
+														<input min="0" max="50" type="number" value="0" name="precio" class="inputPrecio" style="width: 51px;margin-left: 18px;">\
+														<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
+														data-refFuster='+datosReferencia[index99].noRefFuster+'  \
+														data-idarticle='+datosReferencia[index99].IDArticle+'\
+														data-price='+datosReferencia[index99].price+'\
+														data-stock='+datosReferencia[index99].stock+'\
+														data-img='+datosReferencia[index99].imgProd+'\
+														data-idProd='+datosReferencia[index99].idp+'> Añadir al Carrito </a>\
+													</div></td>';
+
+											}
+
+											listadoAccesorios += '\
+											<tr id="'+refLimpio+'" style="display: table-row;">\
+												<td class="refer">\
+													<a href="'+idioma+'/'+palabra1+'/cid'+datosReferencia[index99].idCat+'/pid'+datosReferencia[index99].idp+'/'+datosReferencia[index99].nombreCategoria+'/'+datosReferencia[index99].nombreUrl+'/" title="">'+datosReferencia[index99].noRefFuster+'</a>\
+												</td>\
+												<td class="image">\
+													<img id="foto-producto"	src="'+datosReferencia[index99].imgProd+'">\
+												</td>\
+												'+listadoCaracteristicas+'\
+												'+pre+'\
+												'+car+'\
+											</tr>';
+											
+										}
+
+
+										var listadoColumnas = '';
+										listadoColumnas += '<th>'+refPal+'</th>';
+										listadoColumnas += '<th>'+fotoPal+'</th>';
+										
+
+										for (let index = 0; index < guiaFinal.length; index++) {
+											const element = guiaFinal[index];
+											
+											var option = '<option class="filtroselect" value="-">-</option>';
+											var rrr = arrayPadres['id_' + idGuiaFinal[index]];
+											
+											var rrNumero = [];
+											var rrLetra = [];
+
+											for (let o = 0; o < rrr.length; o++) {
+												
+												var elemn = rrr[o];
+												var cant = 0;
+
+												for (let y = 0; y < elemn.length; y++) {
+													if(!isNaN(elemn[y]) || elemn[y] == ','  || elemn[y] == '.'){
+														cant++;
+													}
+												}
+
+												var total = parseFloat(elemn.length);
+
+												if(cant == total){
+													var a = rrr[o].split(',');
+
+													if(a.length > 1){
+														rrNumero.push(a[0]+'.'+a[1]);
+													}else{
+														rrNumero.push(rrr[o]);	
+													}
+												}else{
+													rrLetra.push(rrr[o]);		
+												}
+
+											}
+
+											var arrayNewNumber=[];
+
+											for (let w = 0; w < rrNumero.length; w++) {
+												for (let q = w+1; q < rrNumero.length; q++) {
+
+													var num1 = parseFloat(rrNumero[w]) * 1;
+													var num2 = parseFloat(rrNumero[q]) * 1;
+
+													if(num1>num2){
+														var paux = num1;
+														rrNumero[w] = num2;
+														rrNumero[q] = paux;
 													}
 												}
 											}
 
-
-										}
-
-										var refLimpio = datosReferencia[index99].noRefFuster;
-										refLimpio = refLimpio.replace('/','barra');
-										refLimpio = refLimpio.replace(' ','espacio');
-										refLimpio = refLimpio.replace('.','punto');
-										refLimpio = refLimpio.replace('#','num');
-										refLimpio = refLimpio.replace(',','com');
-
-										listadoAccesorios += '\
-										<tr id="'+refLimpio+'" style="display: table-row;">\
-											<td class="refer">\
-												<a href="'+idioma+'/'+palabra1+'/cid'+datosReferencia[index99].idCat+'/pid'+datosReferencia[index99].idp+'/'+datosReferencia[index99].nombreCategoria+'/'+datosReferencia[index99].nombreUrl+'/" title="">'+datosReferencia[index99].noRefFuster+'</a>\
-											</td>\
-											<td class="image">\
-												<img id="foto-producto"	src="'+datosReferencia[index99].imgProd+'" alt="'+datosReferencia[index99].nombreUrl+'-'+datosReferencia[index99].noRefFuster+'" title="'+datosReferencia[index99].nombreUrl+'-'+datosReferencia[index99].noRefFuster+'">\
-											</td>\
-											'+listadoCaracteristicas+'\
-										</tr>';
-										
-									}
+											rrLetra.sort();
 
 
-
-
-
-									var listadoColumnas = '';
-									listadoColumnas += '<th>'+refPal+'</th>';
-									listadoColumnas += '<th>'+fotoPal+'</th>';
-									// if(localStorage.getItem("userLogged") != "-" && localStorage.getItem("userToken") != "-"){
-									// 	listadoColumnas += '<th>Precio</th>';
-									// }
-
-									
-
-									for (let index = 0; index < guiaFinal.length; index++) {
-										const element = guiaFinal[index];
-										
-										var option = '<option class="filtroselect" value="-">-</option>';
-										var rrr = arrayPadres['id_' + idGuiaFinal[index]];
-										
-										var rrNumero = [];
-										var rrLetra = [];
-
-										for (let o = 0; o < rrr.length; o++) {
-											
-											var elemn = rrr[o];
-											var cant = 0;
-
-											for (let y = 0; y < elemn.length; y++) {
-												if(!isNaN(elemn[y]) || elemn[y] == ','  || elemn[y] == '.'){
-													cant++;
+											for (let h = 0; h < rrNumero.length; h++) {
+												
+												if(rrNumero[h]!="—"&&rrNumero[h]!="-"){
+												option += `<option class='filtroselect' value='`+rrNumero[h]+`'>`+rrNumero[h]+`</option>`;
 												}
 											}
 
-											var total = parseFloat(elemn.length);
-
-											if(cant == total){
-												var a = rrr[o].split(',');
-
-												if(a.length > 1){
-													rrNumero.push(a[0]+'.'+a[1]);
-												}else{
-													rrNumero.push(rrr[o]);	
-												}
-											}else{
-												rrLetra.push(rrr[o]);		
-											}
-
-										}
-
-										var arrayNewNumber=[];
-
-										for (let w = 0; w < rrNumero.length; w++) {
-											for (let q = w+1; q < rrNumero.length; q++) {
-
-												var num1 = parseFloat(rrNumero[w]) * 1;
-												var num2 = parseFloat(rrNumero[q]) * 1;
-
-												if(num1>num2){
-													var paux = num1;
-													rrNumero[w] = num2;
-													rrNumero[q] = paux;
+											for (let h = 0; h < rrLetra.length; h++) {
+												if(rrLetra[h]!="—"&&rrLetra[h]!="-"){
+												option += `<option class='filtroselect' value='`+rrLetra[h]+`'>`+rrLetra[h]+`</option>`;
 												}
 											}
+
+											var valdd = parseFloat(index) + 2;
+											valoresColumn[valdd] = [];
+											valoresColumnD[valdd] = "";
+
+											listadoColumnas += '<th class="bloque-filtro" data-num="'+valdd+'" >'+element+'<br>\
+											<span><select id="selec'+valdd+'" class="filtroo"> \
+											'+option+'\
+											</select></span>\
+											</th>';
+										}
+										
+										if(localStorage.getItem("userLogged") != "-" && localStorage.getItem("userToken") != "-"){
+											listadoColumnas += '<th>Precio</th>';
 										}
 
-										rrLetra.sort();
-
-
-										for (let h = 0; h < rrNumero.length; h++) {
-											
-											if(rrNumero[h]!="—"&&rrNumero[h]!="-"){
-											option += `<option class='filtroselect' value='`+rrNumero[h]+`'>`+rrNumero[h]+`</option>`;
-											}
+										if(localStorage.getItem("userLogged") != "-" && localStorage.getItem("userToken") != "-"){
+											listadoColumnas += '<th>Añadir al Carrito</th>';
 										}
 
-										for (let h = 0; h < rrLetra.length; h++) {
-											if(rrLetra[h]!="—"&&rrLetra[h]!="-"){
-											option += `<option class='filtroselect' value='`+rrLetra[h]+`'>`+rrLetra[h]+`</option>`;
-											}
-										}
+										contenido = '\
+										<div id="wrapper-accesorios-productos">\
+											<table id="accesorios-productos">\
+											<thead>\
+												<tr>\
+													'+listadoColumnas+'\
+												</tr>\
+											</thead>\
+												<tbody>\
+													'+listadoAccesorios+'\
+												</tbody>\
+											</table>\
+										</div>\
+										';
 
-										var valdd = parseFloat(index) + 2;
-										valoresColumn[valdd] = [];
-										valoresColumnD[valdd] = "";
+										$('#listadoTabl').html(contenido);
 
-										listadoColumnas += '<th class="bloque-filtro" data-num="'+valdd+'" >'+element+'<br>\
-										<span><select id="selec'+valdd+'" class="filtroo"> \
-										'+option+'\
-										</select></span>\
-										</th>';
 									}
-									
-									if(localStorage.getItem("userLogged") != "-" && localStorage.getItem("userToken") != "-"){
-										listadoColumnas += '<th></th>';
-									}
-
-									contenido = '\
-									<div id="wrapper-accesorios-productos">\
-										<table id="accesorios-productos">\
-										<thead>\
-											<tr>\
-												'+listadoColumnas+'\
-											</tr>\
-										</thead>\
-											<tbody>\
-												'+listadoAccesorios+'\
-											</tbody>\
-										</table>\
-									</div>\
-									';
-
-									$('#listadoTabl').html(contenido);
-
 								}
-							}
+							});
 						});
-					});
-						
+					}
 				}
 			}
 		});

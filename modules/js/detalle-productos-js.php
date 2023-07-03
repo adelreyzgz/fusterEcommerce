@@ -96,6 +96,8 @@ $(document).ready(function($) {
 		if(response){
 			var data = JSON.parse(response);
 			var result = data.result;
+
+
 			var i = 0;
 			eskit=result[0].esKit;
 			refComponen=result[0].refComp;
@@ -110,296 +112,370 @@ $(document).ready(function($) {
 			var marca = '';
 			var refUNI = '';
 			if(data.code == 1 && result.length > 0){
-				marca = data.result[0].marca
-				var listadoRefCate = [];
-				$.each( result, function( i, row ){
-						var $insert = false;
-
-						listadoRefCate.push({
-							'refOem' : row.refOem,
-							'categoria' : row.idCategoria,
-							'nbCategoria' : row.categoria,
-							'padreID' : row.idPadre,
-							'padre' : row.catPadre
-						})
-
-						refUNI = row.noRefFuster;
-						if($.inArray(row.refOem, aRefOemC) == -1){
-
-							aRefOemC = [];
-							aSerieC = [];
-							aModelC = [];
-							
-							aRefOemC.push(row.refOem);
-							arrayRefOem.push(row.refOem);
-
-							$.each( result, function( j, row2 ){
-								if($.inArray(row2.serie, aSerieC) == -1 && row2.refOem == row.refOem){		
-
-									$.each( result, function( h, row3 ){
-										if($.inArray(row3.idMod, aModelC) == -1 && row3.refOem == row.refOem && row3.serie == row2.serie ){
-											aModelC.push(row3.idMod);
-											arrayModel.push(row3.modelo);
-											$insert = true;
-										}
-									});
-
-									aSerieC.push(row2.serie);
-									arraySerie.push({ 
-										"serie"    : row2.serie,
-										"modelos"  : arrayModel,
-									});
-									
-									arrayModel = [];
-								}
-							});
-
-						}
-
-						if($insert){
-							$insert = false;
-							arrayGeneral.push({ 
-								"refOem"    : arrayRefOem,
-								"series"  : arraySerie,
-							});
-
-							arraySerie = [];
-							arrayRefOem = [];
-						}
-					
-				});
 				
-				var arrayCopy = JSON.parse( JSON.stringify( arrayGeneral ) );
+				var access_token = localStorage.getItem("access_token_fuster");
 
-				for ( var k = 0, p = arrayGeneral.length; k < p; k++ ) {
-					if(arrayGeneral[k]){
-						var aux2 = arrayGeneral[k];
-						for ( var j = 0, l = arrayCopy.length; j < l; j++ ) {
-							var serieGeneral = JSON.stringify(aux2.series);
-							var serieCopy = JSON.stringify(arrayCopy[j].series);
+				if(access_token){
+					// INICIO INTERCEPTOR
+					console.log('INICIO INTERCEPTOR')
+					var arrayRefFusterI = '';
+
+					for (let index = 0; index < result.length; index++) {
+						const element = result[index];
+
+						if(!index){
+							arrayRefFusterI += '[';
+						}
+
+						arrayRefFusterI += '"'+element.noRefFuster+'"';
 						
-							if((serieGeneral == serieCopy) && ($.inArray(arrayCopy[j].refOem[0], aux2.refOem) == -1)){
-								var aux = arrayCopy[j].refOem[0];
-								aux2.refOem.push(aux);
-							}
-						};
-					}
-				}
-				
-				for ( var k = 0, p = arrayGeneral.length; k < p; k++ ) {
-					arrayGeneral[k].refOem = (arrayGeneral[k].refOem).sort();
-				}
-				
-				function removeDuplicates(originalArray, prop) {
-					 var newArray = [];
-					 var lookupObject  = {};
-
-					 for(var i in originalArray) {
-						lookupObject[originalArray[i][prop]] = originalArray[i];
-					 }
-
-					 for(i in lookupObject) {
-						 newArray.push(lookupObject[i]);
-					 }
-					  return newArray;
-				 }
-
-				var uniqueArray = removeDuplicates(arrayGeneral, "refOem");
-				
-				var template = '';
-
-
-
-				//AQUI
-				var nombreProd = 'x' + $('.nombreProdHtml').text();
-
-				if(nombreProd.indexOf("Kit")>-1 || nombreProd.indexOf("kit")>-1  || nombreProd.indexOf("Conjunto")>-1){
-					var arrayContadorMax = [];
-					for (let index = 0; index < uniqueArray.length; index++) {
-						var arr = uniqueArray[index].refOem;
-						arrayContadorMax.push(arr.length);
-					}
-
-					var mayor = 0;
-					var pos = 0;
-					for(i = 0; i < arrayContadorMax.lenght; i++){
-						if (arrayContadorMax[i] > mayor)
-						{
-							mayor = arrayContadorMax[i];
-							pos = i;
-						};
-					}
-
-					var uniqueArray2 = uniqueArray[pos];
-					uniqueArray = [];
-					uniqueArray.push(uniqueArray2);
-
-				}
-
-
-				for ( var k = 0, p = uniqueArray.length; k < p; k++ ) {
-
-					var series = uniqueArray[k].series;
-					var refOem = uniqueArray[k].refOem;
-					var templateSeries = '';
-					
-					for ( var j = 0, w = series.length; j < w; j++ ) {
-						templateSeries +='\
-							<ul class="nombre-serie">\
-								<li class="nombre-serie">'+palabra2+': '+series[j].serie+'</li>\
-							</ul>\
-						';
-
-						var modelos = series[j].modelos;
-						for ( var r = 0, u = modelos.length; r < u; r++ ) {
-							templateSeries +='\
-								<li>'+modelos[r]+'</li>\
-							';
+						if(index < (result.length-1)){
+							arrayRefFusterI += ',';
 						}
 
-					}
-
-					var aCategoriaC = [];
-
-					for ( var i = 0, w = refOem.length; i < w; i++ ) {
-						for ( var j = 0, t = listadoRefCate.length; j < t; j++ ) {
-
-							if(refOem[i] == listadoRefCate[j].refOem){
-								if($.inArray(listadoRefCate[j].categoria, aCategoriaC) == -1){
-									aCategoriaC.push(listadoRefCate[j].categoria);
-								}
-							}
+						if(index == (result.length-1)){
+							arrayRefFusterI += ']';
 						}
 					}
 
-					var secciones = '';
-					var templateRefOem = '';
-					var templateSecRefTotal = '';
-
-					for ( var i = 0, y = aCategoriaC.length; i < y; i++ ) {
-
-						var idCat = aCategoriaC[i];
-						var idPad = '';
-						var nbCat = '';
-						var nbPad = '';
-
-						for ( var o = 0, s = listadoRefCate.length; o < s; o++ ) {
-							if(listadoRefCate[o].categoria == idCat){
-								idPad = listadoRefCate[o].padreID;
-								nbCat = listadoRefCate[o].nbCategoria;
-								nbPad = listadoRefCate[o].padre;
-								break;
-							}
-						}
-
-						var nbCatURL = cleanName(nbCat);
-						var url = ''+idioma+'/'+palabra1+'/mid'+mid+'/cid'+idCat+'/'+P1URL+'/'+nbCatURL+'/';
-						var separador = '<span class="separadorr"></span>';
-						var categoriaRow = nbPad + separador + '<a href="'+url+'">'+ nbCat +'</a>';
-						var separado = nbCat.split(' ');				
-
-						if((separado[0] == 'Conjunto' && separado[1] == 'Embrague') 
-						|| (separado[0] == 'Cto.' && separado[1] == 'Embrague') 
-						|| (separado[0] == 'Clutch' && separado[1] == 'Ensemble') 
-						|| (separado[0] == 'Cto.Embrague') 
-						|| (separado[0] == 'Ensemble' && separado[1] == 'Embrayage') ){
-							
-						}else{
-							var ignoreRef = [];
-
-							secciones = '<div class="field field-name-field-ref-oem field-type-text field-label-above" style="margin-bottom: -8px;margin-top: 15px;">\
-								<div class="field-label">\
-									<span>'+palabra6+':</span>\
-								</div>\
-								<div class="field-items">\
-									<div class="field-item even">\
-										<span style="padding: 1px 0;display: block;"> '+categoriaRow+'</span>\
-									</div>\
-								</div>\
-							</div>';
-							
-							if(separado[0] != 'Cto.Embrague'){
-							var tiene = false;
-							templateRefOem = '<div class="field field-name-field-ref-oem field-type-text field-label-above">\
-								<div class="field-label"><span>REF. OEM:</span></div>\
-								<div class="field-items">\
-									<div class="field-item even">\
-										<ul>';
-
-							for ( var j = 0, w = refOem.length; j < w; j++ ) {
-								for ( var h = 0, t = listadoRefCate.length; h < t; h++ ) {
-									if(aCategoriaC[i] == listadoRefCate[h].categoria 
-									&& refOem[j] == listadoRefCate[h].refOem 
-									&& $.inArray(refOem[j], ignoreRef) == -1 ) 
-									{
-
-										if(refOem[j] != refUNI){
-											tiene = true;
-											ignoreRef.push(refOem[j]);
-											templateRefOem +='\
-												<li style="margin-top: 1px;">'+refOem[j]+'</li>\
-											';
+					if(arrayRefFusterI){
+						$.ajax({
+							method: "GET",
+							headers: {
+								"Authorization": "Bearer " + access_token
+							},
+							url: 'https://apiecommercefuster.ideaconsulting.es/api/articles?codArticles='+arrayRefFusterI
+						}).done(function(response) {
+							// INICIO REQUEST INTERCEPTOR
+								var responseERP = response.data;
+								for (let i = 0; i < responseERP.length; i++) {
+									const respElement = responseERP[i];
+									for (let j = 0; j < result.length; j++) {
+										const element = result[j];
+										if(respElement.CodArticle == element.noRefFuster){
+											result[j].IDArticle = respElement.IDArticle;
+											result[j].Price = Math.round(respElement.Price);
+											result[j].Stock = Math.round(respElement.Stock);
 										}
 									}
 								}
+
+								// OBJETO MODIFICADO CON DATOS DEL ERP
+								console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+								console.log('--------------')
+								// --------------
+
+								logicaOld(result);
+
+								// --------------
+
+							// FIN REQUEST INTERCEPTOR
+						}).fail(function(response) {
+							console.log(response);
+						});
+					}
+				}else{
+					logicaOld(result);
+				}
+				// FIN INTERCEPTOR
+
+
+				function logicaOld(result){
+					marca = data.result[0].marca
+					var listadoRefCate = [];
+					$.each( result, function( i, row ){
+							var $insert = false;
+
+							listadoRefCate.push({
+								'refOem' : row.refOem,
+								'categoria' : row.idCategoria,
+								'nbCategoria' : row.categoria,
+								'padreID' : row.idPadre,
+								'padre' : row.catPadre
+							})
+
+							refUNI = row.noRefFuster;
+							if($.inArray(row.refOem, aRefOemC) == -1){
+
+								aRefOemC = [];
+								aSerieC = [];
+								aModelC = [];
+								
+								aRefOemC.push(row.refOem);
+								arrayRefOem.push(row.refOem);
+
+								$.each( result, function( j, row2 ){
+									if($.inArray(row2.serie, aSerieC) == -1 && row2.refOem == row.refOem){		
+
+										$.each( result, function( h, row3 ){
+											if($.inArray(row3.idMod, aModelC) == -1 && row3.refOem == row.refOem && row3.serie == row2.serie ){
+												aModelC.push(row3.idMod);
+												arrayModel.push(row3.modelo);
+												$insert = true;
+											}
+										});
+
+										aSerieC.push(row2.serie);
+										arraySerie.push({ 
+											"serie"    : row2.serie,
+											"modelos"  : arrayModel,
+										});
+										
+										arrayModel = [];
+									}
+								});
+
 							}
 
-							templateRefOem += '</ul>\
+							if($insert){
+								$insert = false;
+								arrayGeneral.push({ 
+									"refOem"    : arrayRefOem,
+									"series"  : arraySerie,
+								});
+
+								arraySerie = [];
+								arrayRefOem = [];
+							}
+						
+					});
+					
+					var arrayCopy = JSON.parse( JSON.stringify( arrayGeneral ) );
+
+					for ( var k = 0, p = arrayGeneral.length; k < p; k++ ) {
+						if(arrayGeneral[k]){
+							var aux2 = arrayGeneral[k];
+							for ( var j = 0, l = arrayCopy.length; j < l; j++ ) {
+								var serieGeneral = JSON.stringify(aux2.series);
+								var serieCopy = JSON.stringify(arrayCopy[j].series);
+							
+								if((serieGeneral == serieCopy) && ($.inArray(arrayCopy[j].refOem[0], aux2.refOem) == -1)){
+									var aux = arrayCopy[j].refOem[0];
+									aux2.refOem.push(aux);
+								}
+							};
+						}
+					}
+					
+					for ( var k = 0, p = arrayGeneral.length; k < p; k++ ) {
+						arrayGeneral[k].refOem = (arrayGeneral[k].refOem).sort();
+					}
+					
+					function removeDuplicates(originalArray, prop) {
+						var newArray = [];
+						var lookupObject  = {};
+
+						for(var i in originalArray) {
+							lookupObject[originalArray[i][prop]] = originalArray[i];
+						}
+
+						for(i in lookupObject) {
+							newArray.push(lookupObject[i]);
+						}
+						return newArray;
+					}
+
+					var uniqueArray = removeDuplicates(arrayGeneral, "refOem");
+					
+					var template = '';
+					var nombreProd = 'x' + $('.nombreProdHtml').text();
+
+					if(nombreProd.indexOf("Kit")>-1 || nombreProd.indexOf("kit")>-1  || nombreProd.indexOf("Conjunto")>-1){
+						var arrayContadorMax = [];
+						for (let index = 0; index < uniqueArray.length; index++) {
+							var arr = uniqueArray[index].refOem;
+							arrayContadorMax.push(arr.length);
+						}
+
+						var mayor = 0;
+						var pos = 0;
+						for(i = 0; i < arrayContadorMax.lenght; i++){
+							if (arrayContadorMax[i] > mayor)
+							{
+								mayor = arrayContadorMax[i];
+								pos = i;
+							};
+						}
+
+						var uniqueArray2 = uniqueArray[pos];
+						uniqueArray = [];
+						uniqueArray.push(uniqueArray2);
+
+					}
+
+					for ( var k = 0, p = uniqueArray.length; k < p; k++ ) {
+
+						var series = uniqueArray[k].series;
+						var refOem = uniqueArray[k].refOem;
+						var templateSeries = '';
+						
+						for ( var j = 0, w = series.length; j < w; j++ ) {
+							templateSeries +='\
+								<ul class="nombre-serie">\
+									<li class="nombre-serie">'+palabra2+': '+series[j].serie+'</li>\
+								</ul>\
+							';
+
+							var modelos = series[j].modelos;
+							for ( var r = 0, u = modelos.length; r < u; r++ ) {
+								templateSeries +='\
+									<li>'+modelos[r]+'</li>\
+								';
+							}
+
+						}
+
+						var aCategoriaC = [];
+
+						for ( var i = 0, w = refOem.length; i < w; i++ ) {
+							for ( var j = 0, t = listadoRefCate.length; j < t; j++ ) {
+
+								if(refOem[i] == listadoRefCate[j].refOem){
+									if($.inArray(listadoRefCate[j].categoria, aCategoriaC) == -1){
+										aCategoriaC.push(listadoRefCate[j].categoria);
+									}
+								}
+							}
+						}
+
+						var secciones = '';
+						var templateRefOem = '';
+						var templateSecRefTotal = '';
+
+						for ( var i = 0, y = aCategoriaC.length; i < y; i++ ) {
+
+							var idCat = aCategoriaC[i];
+							var idPad = '';
+							var nbCat = '';
+							var nbPad = '';
+
+							for ( var o = 0, s = listadoRefCate.length; o < s; o++ ) {
+								if(listadoRefCate[o].categoria == idCat){
+									idPad = listadoRefCate[o].padreID;
+									nbCat = listadoRefCate[o].nbCategoria;
+									nbPad = listadoRefCate[o].padre;
+									break;
+								}
+							}
+
+							var nbCatURL = cleanName(nbCat);
+							var url = ''+idioma+'/'+palabra1+'/mid'+mid+'/cid'+idCat+'/'+P1URL+'/'+nbCatURL+'/';
+							var separador = '<span class="separadorr"></span>';
+							var categoriaRow = nbPad + separador + '<a href="'+url+'">'+ nbCat +'</a>';
+							var separado = nbCat.split(' ');				
+
+							if((separado[0] == 'Conjunto' && separado[1] == 'Embrague') 
+							|| (separado[0] == 'Cto.' && separado[1] == 'Embrague') 
+							|| (separado[0] == 'Clutch' && separado[1] == 'Ensemble') 
+							|| (separado[0] == 'Cto.Embrague') 
+							|| (separado[0] == 'Ensemble' && separado[1] == 'Embrayage') ){
+								
+							}else{
+								var ignoreRef = [];
+
+								secciones = '<div class="field field-name-field-ref-oem field-type-text field-label-above" style="margin-bottom: -8px;margin-top: 15px;">\
+									<div class="field-label">\
+										<span>'+palabra6+':</span>\
 									</div>\
-								</div>\
-							</div>';	
-							}
-							var arrayRefComponen=refComponen.split(",");
-							var templateRefomponen="";
-
-							if(eskit== 'si'){
-								templateRefomponen += '<div class="field field-name-field-ref-oem field-type-text field-label-above">\
-									<div class="field-label"><span>'+palabraCompRef+':</span></div>\
+									<div class="field-items">\
+										<div class="field-item even">\
+											<span style="padding: 1px 0;display: block;"> '+categoriaRow+'</span>\
+										</div>\
+									</div>\
+								</div>';
+								
+								if(separado[0] != 'Cto.Embrague'){
+								var tiene = false;
+								templateRefOem = '<div class="field field-name-field-ref-oem field-type-text field-label-above">\
+									<div class="field-label"><span>REF. OEM:</span></div>\
 									<div class="field-items">\
 										<div class="field-item even">\
 											<ul>';
 
-								for ( var j = 0; j < arrayRefComponen.length;  j++ ) {
-									templateRefomponen +='<li style="margin-top: 1px;">'+arrayRefComponen[j]+'</li>';
+								for ( var j = 0, w = refOem.length; j < w; j++ ) {
+									for ( var h = 0, t = listadoRefCate.length; h < t; h++ ) {
+										if(aCategoriaC[i] == listadoRefCate[h].categoria 
+										&& refOem[j] == listadoRefCate[h].refOem 
+										&& $.inArray(refOem[j], ignoreRef) == -1 ) 
+										{
+
+											if(refOem[j] != refUNI){
+												tiene = true;
+												ignoreRef.push(refOem[j]);
+												templateRefOem +='\
+													<li style="margin-top: 1px;">'+refOem[j]+'</li>\
+												';
+											}
+										}
+									}
 								}
 
-								templateRefomponen += '</ul>\
+								templateRefOem += '</ul>\
 										</div>\
 									</div>\
 								</div>';	
-							}
-							if(!tiene){
-								templateRefOem = '';
-							}
-							templateSecRefTotal += secciones + templateRefOem  + templateRefomponen;
-						}
-						
-					}
+								}
+								var arrayRefComponen=refComponen.split(",");
+								var templateRefomponen="";
 
-					template += '\
-					<div class="ficha-oem">\
-						<div class="field field-name-field-marca-tractor field-type-text field-label-above">\
-							<div class="field-label"><span><?=${"lang_".$idioma}["marcadeltractor"];?>:</span></div>\
-							<div class="field-items">\
-								<div class="field-item even" style="font-size: 14px;font-weight: 600;">'+marca+'</div>\
-							</div>\
-						</div>\
-						<div class="field field-name-field-modelo-tractor field-type-text field-label-above">\
-							<div class="field-label"><span><?=${"lang_".$idioma}["modelodeltractor"];?>:</span></div>\
-							<div class="field-items">\
-								<div class="field-item even">\
-									<ul>\
-									'+templateSeries+'\
-									</ul>\
+								if(eskit== 'si'){
+									templateRefomponen += '<div class="field field-name-field-ref-oem field-type-text field-label-above">\
+										<div class="field-label"><span>'+palabraCompRef+':</span></div>\
+										<div class="field-items">\
+											<div class="field-item even">\
+												<ul>';
+
+									for ( var j = 0; j < arrayRefComponen.length;  j++ ) {
+										templateRefomponen +='<li style="margin-top: 1px;">'+arrayRefComponen[j]+'</li>';
+									}
+
+									templateRefomponen += '</ul>\
+											</div>\
+										</div>\
+									</div>';	
+								}
+								if(!tiene){
+									templateRefOem = '';
+								}
+								templateSecRefTotal += secciones + templateRefOem  + templateRefomponen;
+							}
+							
+						}
+
+						template += '\
+						<div class="ficha-oem">\
+							<div class="field field-name-field-marca-tractor field-type-text field-label-above">\
+								<div class="field-label"><span><?=${"lang_".$idioma}["marcadeltractor"];?>:</span></div>\
+								<div class="field-items">\
+									<div class="field-item even" style="font-size: 14px;font-weight: 600;">'+marca+'</div>\
 								</div>\
 							</div>\
+							<div class="field field-name-field-modelo-tractor field-type-text field-label-above">\
+								<div class="field-label"><span><?=${"lang_".$idioma}["modelodeltractor"];?>:</span></div>\
+								<div class="field-items">\
+									<div class="field-item even">\
+										<ul>\
+										'+templateSeries+'\
+										</ul>\
+									</div>\
+								</div>\
+							</div>\
+							'+templateSecRefTotal+'\
 						</div>\
-						'+templateSecRefTotal+'\
-					</div>\
-					';
-				}
+						';
+					}
 
-				$('.listadoResumen').html(template);
+					$('.listadoResumen').html(template);
+
+					$('.divCarrito').html('<span class="cantLetter"> Cant. </span><input min="0" max="50" type="number" value="0" name="precio" class="inputPrecio">\
+					<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
+					data-refFuster='+data.result[0].noRefFuster+'  \
+					data-idarticle='+data.result[0].IDArticle+'\
+					data-price='+data.result[0].Price+'\
+					data-stock='+data.result[0].Stock+'\
+					data-img='+$("#foto-producto").attr("src")+'\
+					data-idProd='+pid+'> Añadir al Carrito </a>');
+				}
 			}
 		}
 	});
@@ -697,14 +773,83 @@ $(document).ready(function($) {
 		}).done(function(response) {
 			if(response){
 				var data = JSON.parse(response);
-				var busqueda = data.result;
-				var result = [];
+				var access_token = localStorage.getItem("access_token_fuster");
 
-				for (let i = 0; i < busqueda.length; i++) {
-					var listado = busqueda[i];
-					for (let k = 0; k < listado.length; k++) {
-						var elemento = listado[k];
+				if(access_token){
+					var result = data.result[0];
+					// INICIO INTERCEPTOR
+					console.log('INICIO INTERCEPTOR')
+					var arrayRefFusterI = '';
 
+					for (let index = 0; index < result.length; index++) {
+						const element = result[index];
+
+						console.log('element', element)
+
+						if(!index){
+							arrayRefFusterI += '[';
+						}
+
+						arrayRefFusterI += '"'+element.noRefFuster+'"';
+						
+						if(index < (result.length-1)){
+							arrayRefFusterI += ',';
+						}
+
+						if(index == (result.length-1)){
+							arrayRefFusterI += ']';
+						}
+					}
+
+					console.log('arrayRefFusterI', arrayRefFusterI)
+					if(arrayRefFusterI){
+						$.ajax({
+							method: "GET",
+							headers: {
+								"Authorization": "Bearer " + access_token
+							},
+							url: 'https://apiecommercefuster.ideaconsulting.es/api/articles?codArticles='+arrayRefFusterI
+						}).done(function(response) {
+							// INICIO REQUEST INTERCEPTOR
+								var responseERP = response.data;
+								for (let i = 0; i < responseERP.length; i++) {
+									const respElement = responseERP[i];
+									for (let j = 0; j < result.length; j++) {
+										const element = result[j];
+										if(respElement.CodArticle == element.noRefFuster){
+											result[j].IDArticle = respElement.IDArticle;
+											result[j].Price = Math.round(respElement.Price);
+											result[j].Stock = Math.round(respElement.Stock);
+										}
+									}
+								}
+
+								// OBJETO MODIFICADO CON DATOS DEL ERP
+								console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+								console.log('--------------')
+								// --------------
+
+								logicaOld2(result);
+
+								// --------------
+
+							// FIN REQUEST INTERCEPTOR
+						}).fail(function(response) {
+							console.log(response);
+						});
+					}
+				}else{
+					var result = data.result;
+					logicaOld3(result);
+				}
+				// FIN INTERCEPTOR
+
+
+				function logicaOld2(busqueda){
+					var result = [];
+					console.log('BUSQUEDA', busqueda)
+					for (let i = 0; i < busqueda.length; i++) {
+						var elemento = busqueda[i];
 						if(result.length == 0){
 							result.push(elemento);
 						}else{
@@ -720,149 +865,327 @@ $(document).ready(function($) {
 							}
 						}
 					}
-				}
-				
-				var p = 0;
-				if(result.length > 0){
-					$(capa).html('');
-					var marcasIgnore = [];
-					result.forEach(function(row, index) {
-						var idMarcaS = row['idMar'];
-						var nbMarcaS = row['nbMarca'];
+					
+					console.log('result', result)
 
-						if($.inArray(idMarcaS, marcasIgnore) == -1){
-							marcasIgnore.push(idMarcaS);
-							$(capa).append('<div class="M'+idMarcaS+'P'+idPlano+'" style="margin-bottom: 28px;"><h3 class="rotulo-marca">'+nbMarcaS+'</h3></div>');
-						}
-					});
-
-					for (let u = 0; u < marcasIgnore.length; u++) {
-						var idMarcaS = marcasIgnore[u];
-
+					var p = 0;
+					if(result.length > 0){
+						$(capa).html('');
+						var marcasIgnore = [];
 						result.forEach(function(row, index) {
-							if(row['idMar'] == idMarcaS){
-								var id = row['id'];
-								var nombre = row['nombre'];
-								$.ajax({
-									method: "GET",
-									url: "<?=$base;?>000_admin/_rest/api.php?action=listarRefOemsAndCaractByIdProductoBusqueda&marc="+idMarcaS+"&idProd="+id
-								}).done(function(response) {
-									if(response){
-										p++;
-										var data = JSON.parse(response);
-										row.refOems = data.refOems;
-										row.caract = data.caract;
-										arrayData.push(row);
+							var idMarcaS = row['idMar'];
+							var nbMarcaS = row['nbMarca'];
 
-										if(p == result.length){
-											var dataShowRefOem = '';
-											var dataShowCaract = '';
-
-											if(arrayData){
-												// ORGANIZAR ARRAY
-												function SortArray(x, y){
-													if (x.nombre < y.nombre) {return -1;}
-													if (x.nombre > y.nombre) {return 1;}
-													return 0;
-												}
-												arrayData = arrayData.sort(SortArray);
-
-												/* datos es la variable donde va informacon  */
-												var datos = arrayData;
-												arrayData.forEach(function(row, index) {
-													var refFuster = row["noRefFuster"];
-													var dataShow3 = '';
-													var resultRefOemById = row.refOems;
-													var resultCaractId = row.caract;
-													dataShowRefOem = '';
-													dataShowCaract = '';
-													var tipodisplay = 'display: initial;';
-													if(resultRefOemById != '-'){
-														dataShowRefOem = '<div class="producto-oems">\
-															<div class="field-label"><span>REF. OEM:</span></div>\
-															<div class="field-items">\
-																<div class="field-item even">\
-																	<ul>';
-															resultRefOemById.forEach(function(row2, index2) {	
-
-																dataShowRefOem +='\
-																<li style="margin-top: 1px;">'+row2['refOem']+'</li>';
-															});
-
-														dataShowRefOem += '</ul>\
-																</div>\
-															</div>\
-														</div>';	
-													}
-													
-													var j = 0;
-													if(resultCaractId != '-'){
-														tipodisplay = 'display: inline-table;';
-														resultCaractId.forEach(function(row2, index2) {
-															j++;
-															if(j==resultCaractId.length){
-																dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia"></span></div>';
-															}else{
-																dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia">|</span></div>';
-															}
-														});
-													}
-
-													var imgProd = "assets/images/default.png";
-													if(row['thumbnails']){
-														imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
-													}
-													
-													var nombreUrl = cleanName(row["nombre"]);
-													var nombreMarca = cleanName(row["nbMarca"]);
-													var idMar = row["idMar"];
-													var nombreCategoria = cleanName(row["nbCategoria"]);
-													var idCat = row["idCat"];
-													var idp = row["id"];
-
-													dataShow3 += '\
-													<div id="producto---" class="views-row views-row-'+p+'">\
-														<div class="field-content"></div>\
-														<div class="bloque-imagen">\
-															<div class="imagen-producto">\
-																<img src="'+imgProd+'" alt="'+nombreUrl+'-'+row["noRefFuster"]+'" title="'+nombreUrl+'-'+row["noRefFuster"]+'" />\
-															</div>\
-														</div>\
-														<div class="bloque_detalle">\
-															<div class="field-content">\
-																<h4 class="titulo-producto">\
-																	<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/pid'+idp+'/'+nombreMarca+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
-																	<span class="precioProductos">   </span>\
-																</h4>\
-															</div>\
-															<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
-															<div class="field-items">\
-															<div class="field-item even" style="'+tipodisplay+'">'+dataShowCaract+'</div>\
-															</div>\
-															<div class="divCarrito">\
-																<span class="cantLetter"> Cant. </span><input type="number" name="precio" value="1" class="inputPrecio">\
-																<a href="#" class="addCarrito"  data-refFuster='+row["noRefFuster"]+'> Añadir al Carrito </a>\
-															</div>\
-														</div>\
-														<div class="bloque-oem">\
-															'+dataShowRefOem+'\
-														</div>\
-													</div>\
-													';
-												
-
-													$('div.M'+idMar+'P'+idPlano+'').append(dataShow3);
-												});
-												
-											}
-										}
-									}
-								});
+							if($.inArray(idMarcaS, marcasIgnore) == -1){
+								marcasIgnore.push(idMarcaS);
+								$(capa).append('<div class="M'+idMarcaS+'P'+idPlano+'" style="margin-bottom: 28px;"><h3 class="rotulo-marca">'+nbMarcaS+'</h3></div>');
 							}
 						});
-					}	
-		
+
+						for (let u = 0; u < marcasIgnore.length; u++) {
+							var idMarcaS = marcasIgnore[u];
+
+							result.forEach(function(row, index) {
+								if(row['idMar'] == idMarcaS){
+									var id = row['id'];
+									var nombre = row['nombre'];
+									$.ajax({
+										method: "GET",
+										url: "<?=$base;?>000_admin/_rest/api.php?action=listarRefOemsAndCaractByIdProductoBusqueda&marc="+idMarcaS+"&idProd="+id
+									}).done(function(response) {
+										if(response){
+											p++;
+											var data = JSON.parse(response);
+											row.refOems = data.refOems;
+											row.caract = data.caract;
+											arrayData.push(row);
+
+											if(p == result.length){
+												var dataShowRefOem = '';
+												var dataShowCaract = '';
+
+												if(arrayData){
+													// ORGANIZAR ARRAY
+													function SortArray(x, y){
+														if (x.nombre < y.nombre) {return -1;}
+														if (x.nombre > y.nombre) {return 1;}
+														return 0;
+													}
+													arrayData = arrayData.sort(SortArray);
+
+													/* datos es la variable donde va informacon  */
+													var datos = arrayData;
+													arrayData.forEach(function(row, index) {
+														var refFuster = row["noRefFuster"];
+														var dataShow3 = '';
+														var resultRefOemById = row.refOems;
+														var resultCaractId = row.caract;
+														dataShowRefOem = '';
+														dataShowCaract = '';
+														var tipodisplay = 'display: initial;';
+														if(resultRefOemById != '-'){
+															dataShowRefOem = '<div class="producto-oems">\
+																<div class="field-label"><span>REF. OEM:</span></div>\
+																<div class="field-items">\
+																	<div class="field-item even">\
+																		<ul>';
+																resultRefOemById.forEach(function(row2, index2) {	
+
+																	dataShowRefOem +='\
+																	<li style="margin-top: 1px;">'+row2['refOem']+'</li>';
+																});
+
+															dataShowRefOem += '</ul>\
+																	</div>\
+																</div>\
+															</div>';	
+														}
+														
+														var j = 0;
+														if(resultCaractId != '-'){
+															tipodisplay = 'display: inline-table;';
+															resultCaractId.forEach(function(row2, index2) {
+																j++;
+																if(j==resultCaractId.length){
+																	dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia"></span></div>';
+																}else{
+																	dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia">|</span></div>';
+																}
+															});
+														}
+
+														var imgProd = "assets/images/default.png";
+														if(row['thumbnails']){
+															imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
+														}
+														
+														var nombreUrl = cleanName(row["nombre"]);
+														var nombreMarca = cleanName(row["nbMarca"]);
+														var idMar = row["idMar"];
+														var nombreCategoria = cleanName(row["nbCategoria"]);
+														var idCat = row["idCat"];
+														var idp = row["id"];
+
+														dataShow3 += '\
+														<div id="producto---" class="views-row views-row-'+p+'">\
+															<div class="field-content"></div>\
+															<div class="bloque-imagen">\
+																<div class="imagen-producto">\
+																	<img src="'+imgProd+'" alt="'+nombreUrl+'-'+row["noRefFuster"]+'" title="'+nombreUrl+'-'+row["noRefFuster"]+'" />\
+																</div>\
+															</div>\
+															<div class="bloque_detalle">\
+																<div class="field-content">\
+																	<h4 class="titulo-producto">\
+																		<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/pid'+idp+'/'+nombreMarca+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
+																		<span class="precioProductos">  Precio: '+row["Price"]+'€ </span>\
+																	</h4>\
+																	</h4>\
+																</div>\
+																<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
+																<div class="field-items">\
+																<div class="field-item even" style="'+tipodisplay+'">'+dataShowCaract+'</div>\
+																</div>\
+																<div class="divCarrito">\
+																	<span class="cantLetter"> Cant. </span><input min="0" max="50" type="number" value="0" name="precio" class="inputPrecio">\
+																	<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
+																	data-refFuster='+row["noRefFuster"]+'  \
+																	data-idarticle='+row["IDArticle"]+'\
+																	data-price='+row["Price"]+'\
+																	data-stock='+row["Stock"]+'\
+																	data-img='+imgProd+'\
+																	data-idProd='+idp+'> Añadir al Carrito </a>\
+																</div>\
+															</div>\
+															<div class="bloque-oem">\
+																'+dataShowRefOem+'\
+															</div>\
+														</div>\
+														';
+													
+
+														$('div.M'+idMar+'P'+idPlano+'').append(dataShow3);
+													});
+													
+												}
+											}
+										}
+									});
+								}
+							});
+						}	
+			
+					}
 				}
+
+				function logicaOld3(busqueda){
+					var result = [];
+
+					for (let i = 0; i < busqueda.length; i++) {
+						var listado = busqueda[i];
+						for (let k = 0; k < listado.length; k++) {
+							var elemento = listado[k];
+
+							if(result.length == 0){
+								result.push(elemento);
+							}else{
+								var encontro = -1;
+								for (let j = 0; j < result.length; j++) {
+									if(elemento.id == result[j].id){
+										encontro++;
+									}
+								}
+
+								if(encontro == -1){
+									result.push(elemento);
+								}
+							}
+						}
+					}
+					
+					var p = 0;
+					if(result.length > 0){
+						$(capa).html('');
+						var marcasIgnore = [];
+						result.forEach(function(row, index) {
+							var idMarcaS = row['idMar'];
+							var nbMarcaS = row['nbMarca'];
+
+							if($.inArray(idMarcaS, marcasIgnore) == -1){
+								marcasIgnore.push(idMarcaS);
+								$(capa).append('<div class="M'+idMarcaS+'P'+idPlano+'" style="margin-bottom: 28px;"><h3 class="rotulo-marca">'+nbMarcaS+'</h3></div>');
+							}
+						});
+
+						for (let u = 0; u < marcasIgnore.length; u++) {
+							var idMarcaS = marcasIgnore[u];
+
+							result.forEach(function(row, index) {
+								if(row['idMar'] == idMarcaS){
+									var id = row['id'];
+									var nombre = row['nombre'];
+									$.ajax({
+										method: "GET",
+										url: "<?=$base;?>000_admin/_rest/api.php?action=listarRefOemsAndCaractByIdProductoBusqueda&marc="+idMarcaS+"&idProd="+id
+									}).done(function(response) {
+										if(response){
+											p++;
+											var data = JSON.parse(response);
+											row.refOems = data.refOems;
+											row.caract = data.caract;
+											arrayData.push(row);
+
+											if(p == result.length){
+												var dataShowRefOem = '';
+												var dataShowCaract = '';
+
+												if(arrayData){
+													// ORGANIZAR ARRAY
+													function SortArray(x, y){
+														if (x.nombre < y.nombre) {return -1;}
+														if (x.nombre > y.nombre) {return 1;}
+														return 0;
+													}
+													arrayData = arrayData.sort(SortArray);
+
+													/* datos es la variable donde va informacon  */
+													var datos = arrayData;
+													arrayData.forEach(function(row, index) {
+														var refFuster = row["noRefFuster"];
+														var dataShow3 = '';
+														var resultRefOemById = row.refOems;
+														var resultCaractId = row.caract;
+														dataShowRefOem = '';
+														dataShowCaract = '';
+														var tipodisplay = 'display: initial;';
+														if(resultRefOemById != '-'){
+															dataShowRefOem = '<div class="producto-oems">\
+																<div class="field-label"><span>REF. OEM:</span></div>\
+																<div class="field-items">\
+																	<div class="field-item even">\
+																		<ul>';
+																resultRefOemById.forEach(function(row2, index2) {	
+
+																	dataShowRefOem +='\
+																	<li style="margin-top: 1px;">'+row2['refOem']+'</li>';
+																});
+
+															dataShowRefOem += '</ul>\
+																	</div>\
+																</div>\
+															</div>';	
+														}
+														
+														var j = 0;
+														if(resultCaractId != '-'){
+															tipodisplay = 'display: inline-table;';
+															resultCaractId.forEach(function(row2, index2) {
+																j++;
+																if(j==resultCaractId.length){
+																	dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia"></span></div>';
+																}else{
+																	dataShowCaract +='<div class="bloque-caracteristica"><label>'+row2["alias"]+'</label>'+row2["valor"]+'<span class="tuberia">|</span></div>';
+																}
+															});
+														}
+
+														var imgProd = "assets/images/default.png";
+														if(row['thumbnails']){
+															imgProd = "assets/images/repuestos/fotos/"+idioma+"/" + row['thumbnails'];
+														}
+														
+														var nombreUrl = cleanName(row["nombre"]);
+														var nombreMarca = cleanName(row["nbMarca"]);
+														var idMar = row["idMar"];
+														var nombreCategoria = cleanName(row["nbCategoria"]);
+														var idCat = row["idCat"];
+														var idp = row["id"];
+
+														dataShow3 += '\
+														<div id="producto---" class="views-row views-row-'+p+'">\
+															<div class="field-content"></div>\
+															<div class="bloque-imagen">\
+																<div class="imagen-producto">\
+																	<img src="'+imgProd+'" alt="'+nombreUrl+'-'+row["noRefFuster"]+'" title="'+nombreUrl+'-'+row["noRefFuster"]+'" />\
+																</div>\
+															</div>\
+															<div class="bloque_detalle">\
+																<div class="field-content">\
+																	<h4 class="titulo-producto">\
+																		<a href="'+idioma+'/'+palabra1+'/mid'+idMar+'/cid'+idCat+'/pid'+idp+'/'+nombreMarca+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
+																		<span class="precioProductos">   </span>\
+																	</h4>\
+																</div>\
+																<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
+																<div class="field-items">\
+																<div class="field-item even" style="'+tipodisplay+'">'+dataShowCaract+'</div>\
+																</div>\
+																<div class="divCarrito">\
+																	<span class="cantLetter"> Cant. </span><input type="number" name="precio" value="1" class="inputPrecio">\
+																	<a href="#" class="addCarrito"  data-refFuster='+row["noRefFuster"]+'> Añadir al Carrito </a>\
+																</div>\
+															</div>\
+															<div class="bloque-oem">\
+																'+dataShowRefOem+'\
+															</div>\
+														</div>\
+														';
+													
+
+														$('div.M'+idMar+'P'+idPlano+'').append(dataShow3);
+													});
+													
+												}
+											}
+										}
+									});
+								}
+							});
+						}	
+			
+					}
+				}
+				
 			}
 		});	
 	});
@@ -950,6 +1273,7 @@ $(document).ready(function($) {
 			if(auxSeleccionado.length > 0){
 				$('.ficha-embrague').append('<h3 class="sub-titulo">'+palabra5+'</h3>');
 			}
+			
 			for (let i = 0; i < auxSeleccionado.length; i++) {
 				var embrague = auxSeleccionado[i];
 				

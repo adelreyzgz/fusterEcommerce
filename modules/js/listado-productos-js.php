@@ -107,6 +107,7 @@ $(document).ready(function($) {
 				// FIN INTERCEPTOR
 
 				function logicaOld(result){
+
 					result.forEach(function(row, index) {
 						var id = row['id'];
 						var nombre = row['nombre'];

@@ -75,6 +75,52 @@ $(document).ready(function($) {
 			$('.contenedorDespieces').html(datashow55);
 		}
 	});	
+
+
+	var access_token = localStorage.getItem("access_token_fuster");
+
+	if(access_token){
+		var re = $('#refFusterV').data('value');
+		var param = '["'+re+'"]';
+		$.ajax({
+			method: "GET",
+			headers: {
+				"Authorization": "Bearer " + access_token
+			},
+			url: 'https://apiecommercefuster.ideaconsulting.es/api/articles?codArticles='+param
+		}).done(function(response) {
+			// INICIO REQUEST INTERCEPTOR
+				var responseERP = response.data;
+				for (let i = 0; i < responseERP.length; i++) {
+					const respElement = responseERP[i];
+
+					$('.divCarrito').html('<span class="cantLetter"> Cant. </span><input min="0" max="50" type="number" value="0" name="precio" class="inputPrecio">\
+						<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
+						data-refFuster='+re+'  \
+						data-idarticle='+respElement.IDArticle+'\
+						data-price='+Math.round(respElement.Price)+'\
+						data-stock='+Math.round(respElement.Stock)+'\
+						data-img='+$("#foto-producto").attr("src")+'\
+						data-idProd='+pid+'> Añadir al Carrito </a>');
+				}
+
+				// OBJETO MODIFICADO CON DATOS DEL ERP
+				console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+				console.log('--------------')
+				// --------------
+
+				// --------------
+
+			// FIN REQUEST INTERCEPTOR
+		}).fail(function(response) {
+			console.log(response);
+		});
+
+
+
+	}
+
+
 });
 
 function lanzarslide() { var objeto = document.getElementById("enlaceimagen" + contagen); objeto.click(); }

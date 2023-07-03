@@ -74,7 +74,8 @@
                             <div class="field field-name-field-field-rf-producto field-type-text field-label-above">
                                 <div class="field-label fl"><span><?=${"lang_".$idioma}['ndereferencia'];?>:</span></div>
                                 <div class="field-items">
-                                    <div class="field-item even"><p><?=$refFusterP;?>   <span class="precioProductos" style="margin-left:10px;">   </span></p></div>
+                                    <div class="field-item even" id="refFusterV" data-value="<?=$refFusterP;?> "><p><?=$refFusterP;?>   
+                                    <span class="precioProductos" style="margin-left:10px;">   </span></p></div>
                                 </div>
                             </div>
                             <div class="field field-name-field-descripcion-producto field-type-text field-label-above">
@@ -109,8 +110,7 @@
                             <?php } ?>
                             
                             <div class="divCarrito">
-                                <span class="cantLetter"> Cant. </span><input type="number" value="1" name="precio" class="inputPrecio">
-                                <a href="#" class="addCarrito" data-refFuster='<?=$refFusterP;?>'> Añadir al Carrito </a>
+                                
                             </div>
                         </div>
 

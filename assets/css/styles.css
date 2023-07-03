@@ -2330,7 +2330,8 @@ table#accesorios-productos tr td.refer a:hover {
   text-decoration: underline;
 }
 
-table#accesorios-productos tr td.image {
+table#accesorios-productos tr td.image,
+table#accesorios-productos tr td.precio {
   width: 50px;
   padding: 0;
   text-align: center;

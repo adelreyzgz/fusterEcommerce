@@ -128,8 +128,7 @@
                             <?php } ?>
 
                             <div class="divCarrito">
-                                <span class="cantLetter"> Cant. </span><input type="number" value="1" name="precio" class="inputPrecio">
-                                <a href="#" class="addCarrito"  data-refFuster='<?=$refFusterP;?>'> Añadir al Carrito </a>
+                                
                             </div>
                         </div>
 
