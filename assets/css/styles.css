@@ -9539,3 +9539,99 @@ h3.bloque-marca:hover {
   height: 100%;
   z-index: 2;
 }
+
+#cartTable {
+  width: 100%;
+}
+
+#cartTable tr {
+  height: 60px;
+  font-size: 14px;
+  text-align: center;
+}
+
+#headerTa {
+  font-size: 14px;
+  color: #828282;
+  text-align: center;
+}
+
+#cartTable tbody {
+  border: 0px;
+}
+
+.eliminarCarrito {
+  color: #b69d19 !important;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.eliminarCarrito svg {
+  width: 26px;
+  fill: #b69d19;
+  margin-right: 5px;
+}
+
+.eliminarCarrito:hover svg {
+  width: 26px;
+  fill: #000;
+  margin-right: 5px;
+}
+
+.eliminarCarrito:hover {
+  color: #000 !important;
+  text-decoration: none;
+}
+
+.btntt {
+  background-color: #141213;
+  color: #e9af31 !important;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 4.2px 24px;
+}
+
+.aaCar {
+  background-color: #4c4c4c;
+  color: #fff !important;
+}
+
+.btncompra {
+  min-width: 750px;
+  border-top: 1px solid #ccc;
+  margin-top: 25px;
+  display: flex;
+  height: 124px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resuim {
+  display: flex;
+  justify-content: end;
+  flex-direction: column;
+  align-items: end;
+}
+
+@media (max-width: 700px) {
+  .btncompra {
+    border-top: 1px solid #ccc;
+    margin-top: 25px;
+    display: flex;
+    height: 180px;
+    justify-content: space-between;
+    align-items: initial;
+    flex-direction: column;
+    padding-top: 15px;
+  }
+
+  .resuim {
+    display: flex;
+    justify-content: end;
+    flex-direction: column;
+    align-items: baseline;
+  }
+
+}

@@ -98,9 +98,10 @@ $(document).ready(function($) {
 						<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
 						data-refFuster='+re+'  \
 						data-idarticle='+respElement.IDArticle+'\
+						data-description="'+respElement.Description+'"\
 						data-price='+Math.round(respElement.Price)+'\
 						data-stock='+Math.round(respElement.Stock)+'\
-						data-img='+$("#foto-producto").attr("src")+'\
+						data-img="'+$("#foto-producto").attr("src")+'"\
 						data-idProd='+pid+'> Añadir al Carrito </a>');
 				}
 

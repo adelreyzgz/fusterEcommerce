@@ -176,12 +176,14 @@ $(document).ready(function($) {
         var stock = $(this).attr('data-stock');
         var img = $(this).attr('data-img');
         var idProd = $(this).attr('data-idProd');
+        var description = $(this).attr('data-description');
 
         var cart = [];
 
         var producto = {
             "ref": ref,
             "idarticle": idarticle,
+            "description": description,
             "price": price,
             "stock": stock,
             "valor": valor,

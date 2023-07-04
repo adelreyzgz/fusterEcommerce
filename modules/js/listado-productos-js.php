@@ -81,6 +81,7 @@ $(document).ready(function($) {
 											const element = result[j];
 											if(respElement.CodArticle == element.noRefFuster){
 												result[j].IDArticle = respElement.IDArticle;
+												result[j].Description = respElement.Description;
 												result[j].Price = Math.round(respElement.Price);
 												result[j].Stock = Math.round(respElement.Stock);
 											}
@@ -352,9 +353,10 @@ $(document).ready(function($) {
 																<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
 																data-refFuster='+row["noRefFuster"]+'  \
 																data-idarticle='+row["IDArticle"]+'\
+																data-description="'+row["Description"]+'"\
 																data-price='+row["Price"]+'\
 																data-stock='+row["Stock"]+'\
-																data-img='+imgProd+'\
+																data-img="'+imgProd+'"\
 																data-idProd='+idp+'> Añadir al Carrito </a>\
 															</div>\
 														</div>\

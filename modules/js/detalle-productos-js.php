@@ -154,6 +154,7 @@ $(document).ready(function($) {
 										const element = result[j];
 										if(respElement.CodArticle == element.noRefFuster){
 											result[j].IDArticle = respElement.IDArticle;
+											result[j].Description = respElement.Description;
 											result[j].Price = Math.round(respElement.Price);
 											result[j].Stock = Math.round(respElement.Stock);
 										}
@@ -471,9 +472,10 @@ $(document).ready(function($) {
 					<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
 					data-refFuster='+data.result[0].noRefFuster+'  \
 					data-idarticle='+data.result[0].IDArticle+'\
+					data-description="'+data.result[0].Description+'"\
 					data-price='+data.result[0].Price+'\
 					data-stock='+data.result[0].Stock+'\
-					data-img='+$("#foto-producto").attr("src")+'\
+					data-img="'+$("#foto-producto").attr("src")+'"\
 					data-idProd='+pid+'> Añadir al Carrito </a>');
 				}
 			}
@@ -818,6 +820,7 @@ $(document).ready(function($) {
 										const element = result[j];
 										if(respElement.CodArticle == element.noRefFuster){
 											result[j].IDArticle = respElement.IDArticle;
+											result[j].Description = respElement.Description;
 											result[j].Price = Math.round(respElement.Price);
 											result[j].Stock = Math.round(respElement.Stock);
 										}
@@ -991,9 +994,10 @@ $(document).ready(function($) {
 																	<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
 																	data-refFuster='+row["noRefFuster"]+'  \
 																	data-idarticle='+row["IDArticle"]+'\
+																	data-description="'+row["Description"]+'"\
 																	data-price='+row["Price"]+'\
 																	data-stock='+row["Stock"]+'\
-																	data-img='+imgProd+'\
+																	data-img="'+imgProd+'"\
 																	data-idProd='+idp+'> Añadir al Carrito </a>\
 																</div>\
 															</div>\

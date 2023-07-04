@@ -132,6 +132,7 @@ $(document).ready(function($) {
 											const element = result[j];
 											if(respElement.CodArticle == element.noRefFuster){
 												result[j].IDArticle = respElement.IDArticle;
+												result[j].Description = respElement.Description;
 												result[j].Price = Math.round(respElement.Price);
 												result[j].Stock = Math.round(respElement.Stock);
 											}
@@ -363,9 +364,10 @@ $(document).ready(function($) {
 																<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
 																data-refFuster='+row["noRefFuster"]+'  \
 																data-idarticle='+row["IDArticle"]+'\
+																data-description="'+row["Description"]+'"\
 																data-price='+row["Price"]+'\
 																data-stock='+row["Stock"]+'\
-																data-img='+imgProd+'\
+																data-img="'+imgProd+'"\
 																data-idProd='+idp+'> Añadir al Carrito </a>\
 															</div>\
 														</div>\
@@ -648,6 +650,7 @@ $(document).ready(function($) {
 											const element = result[j];
 											if(respElement.CodArticle == element.noRefFuster){
 												result[j].IDArticle = respElement.IDArticle;
+												result[j].Description = respElement.Description;
 												result[j].Price = Math.round(respElement.Price);
 												result[j].Stock = Math.round(respElement.Stock);
 											}
@@ -681,7 +684,7 @@ $(document).ready(function($) {
 							var price = row['Price'];
 							var stock = row['Stock'];
 							var IDArticle = row['IDArticle'];
-
+							var Description = row['Description'];
 							var nombreUrl = cleanName(row["nombre"]);
 							var nombreCategoria = (path.split('/'))[4];
 							var idCat = path.match(/\/cid([0-9]+)\//).pop();
@@ -760,7 +763,8 @@ $(document).ready(function($) {
 										imgProd: imgProd,
 										price: price,
 										stock: stock,
-										IDArticle: IDArticle
+										IDArticle: IDArticle,
+										Description: Description
 									}
 
 									datosReferencia.push(objectInfo);
@@ -910,9 +914,10 @@ $(document).ready(function($) {
 														<a href="#" style="width: 156px;display: inline-block;text-align: center;" class="addCarrito" \
 														data-refFuster='+datosReferencia[index99].noRefFuster+'  \
 														data-idarticle='+datosReferencia[index99].IDArticle+'\
+														data-description="'+datosReferencia[index99].Description+'"\
 														data-price='+datosReferencia[index99].price+'\
 														data-stock='+datosReferencia[index99].stock+'\
-														data-img='+datosReferencia[index99].imgProd+'\
+														data-img="'+datosReferencia[index99].imgProd+'"\
 														data-idProd='+datosReferencia[index99].idp+'> Añadir al Carrito </a>\
 													</div></td>';
 

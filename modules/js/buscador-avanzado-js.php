@@ -460,6 +460,8 @@ $(document).ready(function($) {
 															result[j].IDArticle = respElement.IDArticle;
 															result[j].Price = Math.round(respElement.Price);
 															result[j].Stock = Math.round(respElement.Stock);
+															result[j].Description = respElement.Description;
+
 														}
 													}
 												}
@@ -611,9 +613,10 @@ $(document).ready(function($) {
 																						<span class="cantLetter"> Cant. </span><input type="number" value="1" name="precio" class="inputPrecio">\
 																						<a href="#" class="addCarrito" data-refFuster='+row["noRefFuster"]+'  \
 																						data-idarticle='+row["IDArticle"]+'\
+																						data-description="'+row["Description"]+'"\
 																						data-price='+row["Price"]+'\
 																						data-stock='+row["Stock"]+'\
-																						data-img='+imgProd+'\
+																						data-img="'+imgProd+'"\
 																						data-idProd='+idp+'\> Añadir al Carrito </a>\
 																					</div>\
 																				</div>\
@@ -756,6 +759,7 @@ $(document).ready(function($) {
 												const element = result[j];
 												if(respElement.CodArticle == element.noRefFuster){
 													result[j].IDArticle = respElement.IDArticle;
+													result[j].Description = respElement.Description;
 													result[j].Price = Math.round(respElement.Price);
 													result[j].Stock = Math.round(respElement.Stock);
 												}
@@ -907,9 +911,10 @@ $(document).ready(function($) {
 																	<span class="cantLetter"> Cant. </span><input type="number" value="1" name="precio" class="inputPrecio">\
 																	<a href="#" class="addCarrito"  data-refFuster='+row["noRefFuster"]+'  \
 																	data-idarticle='+row["IDArticle"]+'\
+																	data-description="'+row["Description"]+'"\
 																	data-price='+row["Price"]+'\
 																	data-stock='+row["Stock"]+'\
-																	data-img='+imgProd+'\
+																	data-img="'+imgProd+'"\
 																	data-idProd='+idp+'> Añadir al Carrito </a>\
 																	</div>\
 															</div>\
