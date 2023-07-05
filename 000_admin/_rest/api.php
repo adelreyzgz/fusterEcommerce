@@ -2064,6 +2064,32 @@
 
             echo json_encode($response);
         }
+        
+        
+        if($action == 'getPedidos'){
+            $id = trim($_GET['idUser']);
+
+            $result = [];
+            $query = $cxn_bd->prepare("SELECT * FROM pedidos where idTienda='$id' ");
+            if($query){
+                if($query->execute()){
+                    $data = $query->get_result();
+                    $data = $data->fetch_all(MYSQLI_ASSOC);
+                    if(count($data)>0){
+                        $msg = 'Consulta ejecutada con exito';
+                        $response= array("code"=>555,"msg"=>$msg, "result"=> $data);
+                    }else{
+                        $msg = 'Error get pedidos';
+                        $response= array("code"=>66,"msg"=>$msg, "result"=> '');
+                    }
+                }
+            }else{
+                $msg = 'Error get pedidos';
+                $response= array("code"=>66,"msg"=>$msg, "result"=> '');
+            }
+
+            echo json_encode($response);
+        }
     }
 
 
