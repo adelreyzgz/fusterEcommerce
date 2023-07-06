@@ -25,9 +25,9 @@
                         <hr style="margin: 77px;margin-bottom: 69px;">
 
                         <div id="pedidosData">
-	                        <h4 style="margin-bottom: 25px;">Historial de Pedidos</h4>
+	                        <h4 style="margin-bottom: 25px;">Historial de Pedidos Webs</h4>
 
-                            <table id="example" class="display" style="width:100%">
+                            <table id="example" class="display" style="width:100%;padding-top: 18px;">
                                 <thead>
                                     <tr>
                                         <th>Pedido</th>
@@ -44,6 +44,38 @@
                                 <tfoot>
                                     <tr>
                                         <th>Pedido</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Cantidad</th>
+                                        <th>Valor</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <hr style="margin: 77px;margin-bottom: 69px;">
+
+                        <div id="pedidosData">
+	                        <h4 style="margin-bottom: 25px;">Historial de Ordenes</h4>
+
+                            <table id="example2" class="display" style="width:100%;padding-top: 18px;">
+                                <thead>
+                                    <tr>
+                                        <th>Orden</th>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Cantidad</th>
+                                        <th>Valor</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ordenes">
+                                    
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Orden</th>
                                         <th>Fecha</th>
                                         <th>Hora</th>
                                         <th>Cantidad</th>

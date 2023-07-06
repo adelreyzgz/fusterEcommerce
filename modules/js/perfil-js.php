@@ -124,9 +124,8 @@ $(document).ready(function($) {
 			var data = JSON.parse(response);
 			var resultG = data.result;
 
-			console.log('PEDIDOS',resultG)
-
 			var pedidos = '';
+			
 			for (let index = 0; index < resultG.length; index++) {
 				const element = resultG[index];
 				pedidos += '\
@@ -136,7 +135,7 @@ $(document).ready(function($) {
 					<td>'+element.hora+'</td>\
 					<td>'+element.cantidad+'</td>\
 					<td>'+element.valor+' €</td>\
-					<td>VER DETALLE</td>\
+					<td><a href="'+idioma+'/perfil/np-'+element.pedido+'/">VER DETALLE</a></td>\
 				</tr>\
 				';
 			}
@@ -147,6 +146,102 @@ $(document).ready(function($) {
 				"pageLength": 25,
 				language: {
 						"emptyTable":     "No hay datos disponibles",
+						"lengthMenu":     "Mostrar _MENU_ registros",
+						"info":           "Mostrando _START_ de _END_ de un total de _TOTAL_ entradas",
+						"infoEmpty":      "Mostrando 0 de 0 de un total de 0 entradas",
+						"infoFiltered":   "(filtrado de un total de _MAX_ total entradas)",
+						"search":         "Buscar:",
+						"zeroRecords":    "No se encontraron datos",
+						"paginate": {
+							"first":      "Primera",
+							"last":       "Última",
+							"next":       "Siguiente",
+							"previous":   "Anterior"
+						},
+					},
+			} );
+		}
+	});
+
+
+	var id = datosUserLogin.IDCustomer;
+
+	var access_token = localStorage.getItem("access_token_fuster");
+	if(access_token){
+		// INICIO INTERCEPTOR
+		console.log('INICIO INTERCEPTOR')
+		var arrayRefFusterI = '';
+
+			$.ajax({
+				method: "GET",
+				headers: {
+					"Authorization": "Bearer " + access_token
+				},
+				url: 'https://apiecommercefuster.ideaconsulting.es/api/orders'
+			}).done(function(response) {
+				// INICIO REQUEST INTERCEPTOR
+					var responseERP = response.data;
+					for (let i = 0; i < responseERP.length; i++) {
+						const respElement = responseERP[i];
+						for (let j = 0; j < result.length; j++) {
+							const element = result[j];
+							if(respElement.CodArticle == element.noRefFuster){
+								result[j].IDArticle = respElement.IDArticle;
+								result[j].Price = Math.round(respElement.Price);
+								result[j].Stock = Math.round(respElement.Stock);
+								result[j].Description = respElement.Description;
+
+							}
+						}
+					}
+
+					// OBJETO MODIFICADO CON DATOS DEL ERP
+					console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
+					console.log('--------------')
+					// --------------
+
+					//----------------------------------------
+
+					// --------------
+
+				// FIN REQUEST INTERCEPTOR
+			}).fail(function(response) {
+				console.log(response);
+			});
+	}
+
+
+	$.ajax({
+		method: "GET",
+		url: "<?=$base;?>000_admin/_rest/api.php?action=getPedidos&idUser="+id
+	}).done(function(response) {
+		if(response){
+			var data = JSON.parse(response);
+			var resultG = data.result;
+
+			var pedidos = '';
+			
+			for (let index = 0; index < resultG.length; index++) {
+				const element = resultG[index];
+				pedidos += '\
+				<tr>\
+					<td>'+element.pedido+'</td>\
+					<td>'+element.fecha+'r</td>\
+					<td>'+element.hora+'</td>\
+					<td>'+element.cantidad+'</td>\
+					<td>'+element.valor+' €</td>\
+					<td><a href="'+idioma+'/perfil/np-'+element.pedido+'/">VER DETALLE</a></td>\
+				</tr>\
+				';
+			}
+			
+			$('#pedidos').html(pedidos);
+
+			$('#example2').DataTable( {
+				"pageLength": 25,
+				language: {
+						"emptyTable":     "No hay datos disponibles",
+						"lengthMenu":     "Mostrar _MENU_ registros",
 						"info":           "Mostrando _START_ de _END_ de un total de _TOTAL_ entradas",
 						"infoEmpty":      "Mostrando 0 de 0 de un total de 0 entradas",
 						"infoFiltered":   "(filtrado de un total de _MAX_ total entradas)",

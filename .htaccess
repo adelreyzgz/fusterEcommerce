@@ -108,6 +108,9 @@ RewriteRule ^([a-z]+)/perfil/$ index.php?module=modules/login/perfil.php&module_
 RewriteRule ^([a-z]+)/profil/$ index.php?module=modules/login/perfil.php&module_js=modules/js/perfil-js.php&module_seo=modules/seo/perfil-seo.php&idioma=$1
 
 
+RewriteRule ^([a-z]+)/perfil/np-([a-zA-Z0-9-]+)/$ index.php?module=modules/login/pedidos.php&module_js=modules/js/pedidos-js.php&module_seo=modules/seo/pedidos-seo.php&idioma=$1&id=$2
+
+
 RewriteRule ^([a-zÑ-üA-Z0-9/\w\s-]+)$ convertURL.php
 
 ErrorDocument 404 /index.php
