@@ -36,16 +36,13 @@
                                 <div class="resuim">
                                     
                                     <div style="margin-bottom: 13px;font-size: 18px;font-weight: 600;">
-                                        TOTAL: <span id="costoTotal"></span>
+                                        TOTAL: 55 €
                                     </div>
                                     <div>
-                                    <a href="#" id="actualizarCarrito" style="width: 156px;display: inline-block;text-align: center;background-color: #02b2e8;color: #fff !important;padding: 10px 4px;" class="btntt"> 
-                                            Actualizar Carrito 
-                                        </a>
                                         <a href="#" id="limpiarCarrito" style="width: 156px;display: inline-block;text-align: center;background-color: #d8a42b;color: #fff !important;padding: 10px 4px;" class="btntt"> 
                                             Vaciar Carrito 
                                         </a>
-                                        <a href="#" id="finalizarPedido" style="width: 156px;display: inline-block;text-align: center;padding: 10px 4px;" class="btntt"> 
+                                        <a href="#" style="width: 156px;display: inline-block;text-align: center;padding: 10px 4px;" class="btntt"> 
                                             Finalizar Pedido
                                         </a>
                                     </div>
@@ -72,7 +69,7 @@
                                         Referencia Fuster
                                     </div>
                                     <div>
-                                        <input type="text" name="refFuster"  id="codigoB" class="inputPrecio" style="width: 230px;text-align: right;padding-right: 10px;">
+                                        <input type="text" name="refFuster" class="inputPrecio" style="width: 230px;text-align: right;padding-right: 10px;">
                                     </div>
                                 </div>
                                 <div style="margin: 20px;margin-right: 50px;">
@@ -80,12 +77,19 @@
                                         Cantidad
                                     </div>
                                     <div>
-                                        <input min="0" max="50" type="number" value="0" id="cantidadB" name="precio" class="inputPrecio" style="width: 70px;">
+                                        <input min="0" max="50" type="number" value="0" name="precio" class="inputPrecio" style="width: 70px;">
                                     </div>
                                 </div>
                                 <div style="margin: 20px;display: flex;align-items: center;">
                                     <div style="margin-top: 15px;">
-                                        <a href="#" id="AddProdCodigoF" style="width: 190px;display: inline-block;text-align: center;padding: 5px;" class="aaCar"> Añadir al Carrito </a>
+                                        <a href="#" style="width: 190px;display: inline-block;text-align: center;padding: 5px;" class="addCarrito aaCar"
+                                        data-refFuster=''
+                                        data-idarticle=''
+                                        data-description=''
+                                        data-price=''
+                                        data-stock=''
+                                        data-img=''
+                                        data-idProd=''> Añadir al Carrito </a>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +115,7 @@
                                         Archivo CSV
                                     </div>
                                     <div>
-                                        <input type="file" name="refFuster"  id="file" class="inputPrecio" style="width: 350px;text-align: left;padding-right: 10px;">
+                                        <input type="file" name="refFuster" class="inputPrecio" style="width: 350px;text-align: left;padding-right: 10px;">
                                     </div>
                                 </div>
                                 <div style="margin: 20px;display: flex;align-items: center;">
