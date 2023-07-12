@@ -4,47 +4,62 @@
 var $ = $.noConflict();
 $(document).ready(function($) {
 	"use strict";
-
-	var indiceActivo=-1
-
+	
 	var datosUserLogin = JSON.parse(localStorage.getItem('user_data_fuster'));
 	var datosUserAddressLogin = JSON.parse(localStorage.getItem('user_data_address_fuster'));
 
-	$('#cerrar-sesion').click(function (e) {
-        e.preventDefault();
-		localStorage.setItem("access_token_fuster", '');
-		localStorage.setItem("user_data_fuster", '');
-		localStorage.setItem("user_data_address_fuster", '');
-        localStorage.setItem("user_cart_fuster", '');
-		window.location.replace("./");
-	});
-
+	var path = window.location.pathname;
+	var ordenId = path.match(/\/no-([a-zA-Z0-9-]+)\//).pop();
 	var id = datosUserLogin.IDCustomer;
-	$.ajax({
-		method: "GET",
-		url: "<?=$base;?>000_admin/_rest/api.php?action=getPedidos&idUser="+id
-	}).done(function(response) {
-		if(response){
-			var data = JSON.parse(response);
-			var resultG = data.result;
+	var nbDistribuidor = datosUserLogin.CompanyName;
+	var orderRef = '';
+	$('#pedidoIdd').html(ordenId);
+	var ordenes = '';
+	var access_token = localStorage.getItem("access_token_fuster");
+	if(access_token){
+		$.ajax({
+			method: "GET",
+			headers: {
+				"Authorization": "Bearer " + access_token
+			},
+			url: 'https://apiecommercefuster.ideaconsulting.es/api/orders/'+ordenId
+		}).done(function(response) {
+			var responseERP = response.data;
+			const element = responseERP;
 
-			var pedidos = '';
-			
-			for (let index = 0; index < resultG.length; index++) {
-				const element = resultG[index];
-				pedidos += '\
-				<tr>\
-					<td>'+element.pedido+'</td>\
-					<td>'+element.fecha+'r</td>\
-					<td>'+element.hora+'</td>\
-					<td>'+element.cantidad+'</td>\
-					<td>'+element.valor+'</td>\
-					<td><a href="'+idioma+'/perfil/detallepedido/np-'+element.pedido+'/">DETALLES</a></td>\
-				</tr>\
+			console.log(element)
+			var orderD = formatDate(element.OrderDate);
+			var CodOrder = element.CodOrder;
+			var Address = element.Address+' '+element.ZipCode+' '+element.Country;
+
+			orderRef = element.CodOrder;
+			var ta = parseFloat(element.TotalAmount);
+			$('.distr').html(nbDistribuidor);
+			$('#ordenId').html(orderRef);
+			$('.direEnv').html(Address);
+			$('.tottal').html(+ta.toFixed(2)+' €');
+
+			var listProd = element.OrderLine;
+			for (let index = 0; index < listProd.length; index++) {
+				const elementProd = listProd[index];
+				var p = parseFloat(elementProd.Price);
+				var a = parseFloat(elementProd.Amount);
+				var c = parseFloat(elementProd.Quantity);
+
+				ordenes += '\
+					<tr>\
+						<td>'+elementProd.CodArticle+'</td>\
+						<td>'+Math.round(c)+'</td>\
+						<td>'+p.toFixed(2)+'</td>\
+						<td>'+a.toFixed(2)+'</td>\
+					</tr>\
 				';
 			}
-			
-			$('#pedidos').html(pedidos);
+		
+			$('#ordenes').html(ordenes);
+
+			$('.loading').hide();
+			$('.datos-orden').show();
 
 			$('#example3 thead tr')
 				.clone(true)
@@ -52,7 +67,7 @@ $(document).ready(function($) {
 				.appendTo('#example3 thead');
 		
 			const d = new Date();
-			var titleN = 'Reporte de Pedidos - '+d;
+			var titleN = 'Productos de la Orden - '+orderRef+' - '+d;
 			var table = $('#example3').DataTable({
 				"pageLength": 25,
 				language: {
@@ -74,17 +89,17 @@ $(document).ready(function($) {
 				buttons: [
 					{
 						extend: 'excel',
-						text: 'Export data to excel',
+						text: 'Export data products to excel',
 						title: titleN,
 						exportOptions: {
-							columns: [0,1,2,3,4],
+							columns: [0,1,2,3],
 							modifier: {
 								page: 'current'
 							}
 						},
 						customize: function(xlsx) {
 
-							var filtros = $('#pedidosData .filters input');
+							var filtros = $('#pedids .filters input');
 							var sheet = xlsx.xl.worksheets['sheet1.xml'];
 							var downrows = filtros.length + 3;
 							var clRow = $('row', sheet);
@@ -129,7 +144,7 @@ $(document).ready(function($) {
 							var valor = '';
 							var cant = 2;
 
-							filas += Addrow(51,1, [{ k: 'A', v: 'Listado de Pedidos' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
+							filas += Addrow(51,1, [{ k: 'A', v: 'Productos de la Orden - '+orderRef+'' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
 							filas += Addrow(5,2, [{ k: 'A', v: '' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
 
 							for (let index = 0; index < filtros.length-1; index++) {
@@ -155,7 +170,7 @@ $(document).ready(function($) {
 
 							
 							var tdo = sheet.childNodes[0].childNodes[1].innerHTML;
-							var rplace = tdo.replace('<row xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" r="10"><c t="inlineStr" r="A10" s="51"><is><t xml:space="preserve">'+titleN+'</t></is></c></row>', "");
+							var rplace = tdo.replace('<row xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" r="8"><c t="inlineStr" r="A8" s="51"><is><t xml:space="preserve">'+titleN+'</t></is></c></row>', "");
 
 							sheet.childNodes[0].childNodes[1].innerHTML = rplace;
 
@@ -206,8 +221,9 @@ $(document).ready(function($) {
 						});
 				},
 			});
-		}
-	});
+		});
+	}
+
 
 	function formatDate(date) {
 		var d = new Date(date),
@@ -222,7 +238,15 @@ $(document).ready(function($) {
 
 		return [year, month, day].join('-');
 	}
-		
+
+	$('#cerrar-sesion').click(function (e) {
+        e.preventDefault();
+		localStorage.setItem("access_token_fuster", '');
+		localStorage.setItem("user_data_fuster", '');
+		localStorage.setItem("user_data_address_fuster", '');
+        localStorage.setItem("user_cart_fuster", '');
+		window.location.replace("./");
+	});
 });
 
 </script>

@@ -512,7 +512,14 @@ $lang_es = array(
 
 "datosPerfil" => "Datos de Perfil",     
 
-
+   
+"direccionesB" => "Direcciones de Envio",
+"facturasB" => "Historial de Facturas",
+"ordenesB" => "Historial de Ordenes",
+"pedidosB" => "Historial de Pedidos Webs",
+"detallespedidosB" => "Detalles del Pedido Web",
+"detallesordenesB" => "Detalles de la Orden",
+"perfilB" => "Datos de Perfil",
 
 
 

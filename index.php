@@ -140,6 +140,15 @@ if($host == "repuestosfuster.fr" || $host == "www.repuestosfuster.fr"){
         <script type="text/javascript" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> 
         <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.2.3/js/dataTables.fixedHeader.min.js"></script> 
 
+        
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.0/js/dataTables.buttons.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.0/js/buttons.html5.min.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.4.0/js/buttons.print.min.js"></script>
+
+
         <script src="assets/js/slick.js" type="text/javascript" charset="utf-8"></script>
 
         <script src='https://www.google.com/recaptcha/api.js?render=6Ld5Iq8jAAAAAAoZc3YiMaHML0oAbpT9zbyzV86g'> 
@@ -427,29 +436,28 @@ if($host == "repuestosfuster.fr" || $host == "www.repuestosfuster.fr"){
         var $ = $.noConflict();
         $(document).ready(function($) {
             "use strict";
-                var datosUserLogin = '';
+            var datosUserLogin = '';
 
-                if (window.localStorage.getItem('user_data_fuster') !== undefined
-                    && window.localStorage.getItem('user_data_fuster')
-                ) {
-                    datosUserLogin = JSON.parse(localStorage.getItem('user_data_fuster'));
-                    $('.carritoHeader').show();
-                    $('.perfil').show();
-                    $('#estilosCart').attr('href', 'assets/css/cartStyleTrue.css');
-                }else{
-                    $('.acceso').show();
-                    $('#estilosCart').attr('href', 'assets/css/cartStyleFalse.css');
+            if (window.localStorage.getItem('user_data_fuster') !== undefined
+                && window.localStorage.getItem('user_data_fuster')
+            ) {
+                datosUserLogin = JSON.parse(localStorage.getItem('user_data_fuster'));
+                $('.carritoHeader').show();
+                $('.perfil').show();
+                $('#estilosCart').attr('href', 'assets/css/cartStyleTrue.css');
+            }else{
+                $('.acceso').show();
+                $('#estilosCart').attr('href', 'assets/css/cartStyleFalse.css');
+            }
+            
+            if(localStorage.getItem("user_cart_fuster")){
+                var userCartLS = JSON.parse(window.localStorage.getItem("user_cart_fuster"));
+                var cantidad = 0;
+                for (let index = 0; index < userCartLS.length; index++) {
+                    cantidad += parseInt(userCartLS[index].valor);
                 }
-                
-                if(localStorage.getItem("user_cart_fuster")){
-                    var userCartLS = JSON.parse(window.localStorage.getItem("user_cart_fuster"));
-                    var cantidad = 0;
-                    for (let index = 0; index < userCartLS.length; index++) {
-                        cantidad += parseInt(userCartLS[index].valor);
-                    }
-                    $('.cantProdCart').html(cantidad);
-                }
-                
+                $('.cantProdCart').html(cantidad);
+            }
         });
     </script>
 

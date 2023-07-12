@@ -193,7 +193,17 @@ if(isset($_GET['module'])){
        case 'modules/legales/aviso-legal.php' : $ruta = ${"lang_".$idioma}['avisolegal'];$titleHead= ${"lang_".$idioma}['avisolegal'];break;
        case 'modules/faqs/faqs.php' : $ruta = ${"lang_".$idioma}['preguntasfrecuentes'];$titleHead= ${"lang_".$idioma}['preguntasfrecuentes'];break;
        case 'modules/login/acceso.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['acceso'];break;
-   }
+   
+       case 'modules/login/direcciones.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['direccionesB'];break;
+       case 'modules/login/facturas.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['facturasB'];break;
+       case 'modules/login/ordenes.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['ordenesB'];break;
+       case 'modules/login/pedidos.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['pedidosB'];break;
+       case 'modules/login/detallepedidos.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['detallespedidosB'];break;
+       case 'modules/login/detalleordenes.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['detallesordenesB'];break;
+       case 'modules/login/perfil.php' : $ruta = ${"lang_".$idioma}['acceso'];$titleHead= ${"lang_".$idioma}['perfilB'];break;
+
+   
+    }
 }
 
 

@@ -108,7 +108,18 @@ RewriteRule ^([a-z]+)/perfil/$ index.php?module=modules/login/perfil.php&module_
 RewriteRule ^([a-z]+)/profil/$ index.php?module=modules/login/perfil.php&module_js=modules/js/perfil-js.php&module_seo=modules/seo/perfil-seo.php&idioma=$1
 
 
-RewriteRule ^([a-z]+)/perfil/np-([a-zA-Z0-9-]+)/$ index.php?module=modules/login/pedidos.php&module_js=modules/js/pedidos-js.php&module_seo=modules/seo/pedidos-seo.php&idioma=$1&id=$2
+RewriteRule ^([a-z]+)/perfil/detallepedido/np-([a-zA-Z0-9-]+)/$ index.php?module=modules/login/detallepedidos.php&module_js=modules/js/detallepedidos-js.php&module_seo=modules/seo/detallepedidos-seo.php&idioma=$1&id=$2
+
+RewriteRule ^([a-z]+)/perfil/detalleorden/no-([a-zA-Z0-9-]+)/$ index.php?module=modules/login/detalleordenes.php&module_js=modules/js/detalleordenes-js.php&module_seo=modules/seo/detalleordenes-seo.php&idioma=$1&id=$2
+
+
+RewriteRule ^([a-z]+)/perfil/facturas/$ index.php?module=modules/login/facturas.php&module_js=modules/js/facturas-js.php&module_seo=modules/seo/facturas-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/perfil/ordenes/$ index.php?module=modules/login/ordenes.php&module_js=modules/js/ordenes-js.php&module_seo=modules/seo/ordenes-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/perfil/pedidos/$ index.php?module=modules/login/pedidos.php&module_js=modules/js/pedidos-js.php&module_seo=modules/seo/pedidos-seo.php&idioma=$1
+
+RewriteRule ^([a-z]+)/perfil/direcciones/$ index.php?module=modules/login/direcciones.php&module_js=modules/js/direcciones-js.php&module_seo=modules/seo/direcciones-seo.php&idioma=$1
 
 
 RewriteRule ^([a-zÑ-üA-Z0-9/\w\s-]+)$ convertURL.php

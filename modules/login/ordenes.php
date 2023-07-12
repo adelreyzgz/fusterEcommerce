@@ -8,7 +8,7 @@
         border: 1px solid #4c4c4c;
     }
 
-    #pedidos a{
+    #ordenes a{
         color: #b69d19 !important;
         text-decoration: none;
         display: flex;
@@ -16,22 +16,23 @@
         align-items: center;
     }
 
-    #pedidos a:hover {
+    #ordenes a:hover {
         color: #000 !important;
         text-decoration: none;
     }
-</style>  
+</style>    
+
 <div id="page">
     <div id="main">
         <div id='content' class='column ocultBusca' role='main' style="width: 100%;">
             <h1 class='page__title title' id='page-title' style="display: flex;justify-content: space-between;">
-                <div style="width: 238px;">Historial de Pedidos Webs</div>
+                <div style="width: 238px;">Historial de Ordenes</div>
                 <div style="width: 148px;color: #ac0e0e;cursor: pointer;" id='cerrar-sesion'>(Cerrar Sesión)</div>
             </h1>
             <div class='field field-name-body field-type-text-with-summary field-label-hidden'>
                 <div class='field-items' style="width: 100%;">
                     <div class='field-item even' property='content:encoded'>
-                        <div>
+                    <div>
                             <a href="http://www.fusterrepuestos.local/es/perfil/">Información de Perfil</a> | 
                             <a href="http://www.fusterrepuestos.local/es/perfil/direcciones/">Direcciones de Envio</a> | 
                             <a href="http://www.fusterrepuestos.local/es/perfil/pedidos/">Historial de Pedidos Webs</a> | 
@@ -39,30 +40,33 @@
                             <a href="http://www.fusterrepuestos.local/es/perfil/facturas/">Historial de Facturas</a> 
                         </div>
                         
-                        
-                        <div id="pedidosData" style="margin-top: 45px;margin-bottom: 69px;">
-	                        <h4 style="margin-bottom: 25px;">Historial de Pedidos Webs</h4>
+                        <div id="ordenesData" style="margin-top: 45px;margin-bottom: 69px;">
+	                        <h4 style="margin-bottom: 25px;">Historial de Ordenes</h4>
 
                             <table id="example3" class="display" style="width:100%;padding-top: 18px;">
                                 <thead>
                                     <tr>
-                                        <th>Pedido</th>
+                                        <th>Orden</th>
                                         <th>Fecha</th>
-                                        <th>Hora</th>
-                                        <th>Cantidad</th>
+                                        <th>Entrega</th>
+                                        <th>Cantidad de Productos</th>
                                         <th>Valor (€)</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody id="pedidos">
-                                    
+                                <tbody id="ordenes">
+                                    <tr>
+                                        <td colspan="5">
+                                            <div class="loading"><div class="spinner-border" style="border: .25em solid #e6e2dc;border-right-color: transparent;" role="status"></div></div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>Pedido</th>
+                                        <th>Orden</th>
                                         <th>Fecha</th>
-                                        <th>Hora</th>
-                                        <th>Cantidad</th>
+                                        <th>Entrega</th>
+                                        <th>Cantidad de Productos</th>
                                         <th>Valor (€)</th>
                                         <th>Acción</th>
                                     </tr>

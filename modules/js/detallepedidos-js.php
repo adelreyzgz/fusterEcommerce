@@ -5,41 +5,44 @@ var $ = $.noConflict();
 $(document).ready(function($) {
 	"use strict";
 
-	var indiceActivo=-1
-
+	
 	var datosUserLogin = JSON.parse(localStorage.getItem('user_data_fuster'));
 	var datosUserAddressLogin = JSON.parse(localStorage.getItem('user_data_address_fuster'));
 
-	$('#cerrar-sesion').click(function (e) {
-        e.preventDefault();
-		localStorage.setItem("access_token_fuster", '');
-		localStorage.setItem("user_data_fuster", '');
-		localStorage.setItem("user_data_address_fuster", '');
-        localStorage.setItem("user_cart_fuster", '');
-		window.location.replace("./");
-	});
-
+	var path = window.location.pathname;
+	var pedidoId = path.match(/\/np-([a-zA-Z0-9-]+)\//).pop();
 	var id = datosUserLogin.IDCustomer;
+	var nbDistribuidor = datosUserLogin.CompanyName;
+	var pedidoRef = '';
+	$('#pedidoIdd').html(pedidoId);
+
 	$.ajax({
 		method: "GET",
-		url: "<?=$base;?>000_admin/_rest/api.php?action=getPedidos&idUser="+id
+		url: "<?=$base;?>000_admin/_rest/api.php?action=getPedidoById&idUser="+id+"&idPedido="+pedidoId
 	}).done(function(response) {
 		if(response){
 			var data = JSON.parse(response);
 			var resultG = data.result;
-
 			var pedidos = '';
-			
 			for (let index = 0; index < resultG.length; index++) {
 				const element = resultG[index];
+
+				var distr= 'NbDistribuidor';
+				var direEnv=element.direccionDefecto;
+				var fechaSol= 'fechaSolicitado';
+				var tottal= 'total';
+				pedidoRef = element.pedido;
+				$('.distr').html(nbDistribuidor);
+				$('.direEnv').html(direEnv);
+				$('.fechaSol').html(fechaSol);
+				$('.tottal').html(tottal+' €');
+
 				pedidos += '\
 				<tr>\
-					<td>'+element.pedido+'</td>\
-					<td>'+element.fecha+'r</td>\
-					<td>'+element.hora+'</td>\
-					<td>'+element.cantidad+'</td>\
-					<td>'+element.valor+'</td>\
-					<td><a href="'+idioma+'/perfil/detallepedido/np-'+element.pedido+'/">DETALLES</a></td>\
+					<td>refFuster</td>\
+					<td>cantidad</td>\
+					<td>precio</td>\
+					<td>total</td>\
 				</tr>\
 				';
 			}
@@ -52,7 +55,7 @@ $(document).ready(function($) {
 				.appendTo('#example3 thead');
 		
 			const d = new Date();
-			var titleN = 'Reporte de Pedidos - '+d;
+			var titleN = 'Productos del Pedido - '+pedidoRef+' - '+d;
 			var table = $('#example3').DataTable({
 				"pageLength": 25,
 				language: {
@@ -74,17 +77,17 @@ $(document).ready(function($) {
 				buttons: [
 					{
 						extend: 'excel',
-						text: 'Export data to excel',
+						text: 'Export data products to excel',
 						title: titleN,
 						exportOptions: {
-							columns: [0,1,2,3,4],
+							columns: [0,1,2,3],
 							modifier: {
 								page: 'current'
 							}
 						},
 						customize: function(xlsx) {
 
-							var filtros = $('#pedidosData .filters input');
+							var filtros = $('#pedids .filters input');
 							var sheet = xlsx.xl.worksheets['sheet1.xml'];
 							var downrows = filtros.length + 3;
 							var clRow = $('row', sheet);
@@ -129,7 +132,7 @@ $(document).ready(function($) {
 							var valor = '';
 							var cant = 2;
 
-							filas += Addrow(51,1, [{ k: 'A', v: 'Listado de Pedidos' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
+							filas += Addrow(51,1, [{ k: 'A', v: 'Productos del Pedido - '+pedidoRef+'' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
 							filas += Addrow(5,2, [{ k: 'A', v: '' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
 
 							for (let index = 0; index < filtros.length-1; index++) {
@@ -155,7 +158,7 @@ $(document).ready(function($) {
 
 							
 							var tdo = sheet.childNodes[0].childNodes[1].innerHTML;
-							var rplace = tdo.replace('<row xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" r="10"><c t="inlineStr" r="A10" s="51"><is><t xml:space="preserve">'+titleN+'</t></is></c></row>', "");
+							var rplace = tdo.replace('<row xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" r="8"><c t="inlineStr" r="A8" s="51"><is><t xml:space="preserve">'+titleN+'</t></is></c></row>', "");
 
 							sheet.childNodes[0].childNodes[1].innerHTML = rplace;
 
@@ -208,21 +211,8 @@ $(document).ready(function($) {
 			});
 		}
 	});
+	
 
-	function formatDate(date) {
-		var d = new Date(date),
-			month = '' + (d.getMonth() + 1),
-			day = '' + d.getDate(),
-			year = d.getFullYear();
-
-		if (month.length < 2) 
-			month = '0' + month;
-		if (day.length < 2) 
-			day = '0' + day;
-
-		return [year, month, day].join('-');
-	}
-		
 });
 
 </script>
