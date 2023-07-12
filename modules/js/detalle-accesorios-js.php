@@ -99,7 +99,7 @@ $(document).ready(function($) {
 						data-refFuster='+re+'  \
 						data-idarticle='+respElement.IDArticle+'\
 						data-description="'+respElement.Description+'"\
-						data-price='+Math.round(respElement.Price)+'\
+						data-price='+parseFloat(respElement.Price).toFixed(2)+'\
 						data-stock='+Math.round(respElement.Stock)+'\
 						data-img="'+$("#foto-producto").attr("src")+'"\
 						data-idProd='+pid+'> Añadir al Carrito </a>');

@@ -4,23 +4,30 @@ const removeAccents = (str) => {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 } 
 
-
 var palabra1 = 'accesorios';
 var fotoPal = 'Foto';
 var refPal = 'Ref';
 var todosOption='Todos';
+var precioT = 'Precio';
+var addcartT = 'Añadir al Carrito';
 
 if(idioma == 'en'){
 palabra1 = 'accesories';
 fotoPal = 'Photo';
 refPal = 'Ref';
 todosOption='All';
+precioT = 'Price';
+addcartT = 'Add to Cart';
+
 }
 if(idioma == 'fr'){
 palabra1 = 'accessoires';
 fotoPal = 'Photo';
 refPal = 'Réf';
 todosOption='Tous';
+precioT = 'Prix';
+addcartT = 'Ajouter au panier';
+
 }
 
 var $ = $.noConflict();
@@ -130,14 +137,23 @@ $(document).ready(function($) {
 										const respElement = responseERP[i];
 										for (let j = 0; j < result.length; j++) {
 											const element = result[j];
-											if(respElement.CodArticle == element.noRefFuster){
+											if(respElement.CodArticle == element.noRefFuster && respElement.Price){
 												result[j].IDArticle = respElement.IDArticle;
 												result[j].Description = respElement.Description;
-												result[j].Price = Math.round(respElement.Price);
+												result[j].Price = parseFloat(respElement.Price).toFixed(2);
 												result[j].Stock = Math.round(respElement.Stock);
 											}
+
 										}
 									}
+
+									for (let j = 0; j < result.length; j++) {
+										const element = result[j];
+										if(!element.Price){
+											result.splice(j, 1);
+										}
+									}
+
 
 									// OBJETO MODIFICADO CON DATOS DEL ERP
 									console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
@@ -352,7 +368,7 @@ $(document).ready(function($) {
 															<div class="field-content">\
 																<h4 class="titulo-producto">\
 																	<a href="'+idioma+'/'+palabra1+'/cid'+idCat+'/pid'+idp+'/'+nombreCategoria+'/'+nombreUrl+'/">'+row["nombre"]+'</a>\
-																	<span class="precioProductos">  Precio: '+row["Price"]+'€ </span>\
+																	<span class="precioProductos">  '+precioT+': '+row["Price"]+'€ </span>\
 																</h4>\
 															</div>\
 															<div class="referencia-producto">Ref. Fuster: '+row["noRefFuster"]+'</div>\
@@ -368,7 +384,7 @@ $(document).ready(function($) {
 																data-price='+row["Price"]+'\
 																data-stock='+row["Stock"]+'\
 																data-img="'+imgProd+'"\
-																data-idProd='+idp+'> Añadir al Carrito </a>\
+																data-idProd='+idp+'> '+addcartT+' </a>\
 															</div>\
 														</div>\
 													</div>\
@@ -591,7 +607,7 @@ $(document).ready(function($) {
 				<tr>\
 					<th class="bloque-filtro"><label>'+refPal+'</label></th>\
 					<th class="bloque-filtro"><label>'+fotoPal+'</label></th>\
-					<th class="bloque-filtro"><label>Precio</label></th>\
+					<th class="bloque-filtro"><label>'+precioT+'</label></th>\
 				';
 			}else{
 				listadoFiltros = '\
@@ -648,14 +664,23 @@ $(document).ready(function($) {
 										const respElement = responseERP[i];
 										for (let j = 0; j < result.length; j++) {
 											const element = result[j];
-											if(respElement.CodArticle == element.noRefFuster){
+											if(respElement.CodArticle == element.noRefFuster && respElement.Price){
 												result[j].IDArticle = respElement.IDArticle;
 												result[j].Description = respElement.Description;
-												result[j].Price = Math.round(respElement.Price);
+												result[j].Price = parseFloat(respElement.Price).toFixed(2);
 												result[j].Stock = Math.round(respElement.Stock);
 											}
+
 										}
 									}
+
+									for (let j = 0; j < result.length; j++) {
+										const element = result[j];
+										if(!element.Price){
+											result.splice(j, 1);
+										}
+									}
+
 
 									// OBJETO MODIFICADO CON DATOS DEL ERP
 									console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
@@ -918,7 +943,7 @@ $(document).ready(function($) {
 														data-price='+datosReferencia[index99].price+'\
 														data-stock='+datosReferencia[index99].stock+'\
 														data-img="'+datosReferencia[index99].imgProd+'"\
-														data-idProd='+datosReferencia[index99].idp+'> Añadir al Carrito </a>\
+														data-idProd='+datosReferencia[index99].idp+'> '+addcartT+' </a>\
 													</div></td>';
 
 											}
@@ -1024,11 +1049,11 @@ $(document).ready(function($) {
 										}
 										
 										if(localStorage.getItem("userLogged") != "-" && localStorage.getItem("userToken") != "-"){
-											listadoColumnas += '<th>Precio</th>';
+											listadoColumnas += '<th>'+precioT+'</th>';
 										}
 
 										if(localStorage.getItem("userLogged") != "-" && localStorage.getItem("userToken") != "-"){
-											listadoColumnas += '<th>Añadir al Carrito</th>';
+											listadoColumnas += '<th>'+addcartT+'</th>';
 										}
 
 										contenido = '\

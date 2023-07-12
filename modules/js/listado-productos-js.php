@@ -75,19 +75,31 @@ $(document).ready(function($) {
 							}).done(function(response) {
 								// INICIO REQUEST INTERCEPTOR
 									var responseERP = response.data;
+
+									console.log('responseERP', responseERP)
+									console.log('result', result)
+
 									for (let i = 0; i < responseERP.length; i++) {
 										const respElement = responseERP[i];
 										for (let j = 0; j < result.length; j++) {
 											const element = result[j];
-											if(respElement.CodArticle == element.noRefFuster){
+											if(respElement.CodArticle == element.noRefFuster && respElement.Price){
 												result[j].IDArticle = respElement.IDArticle;
 												result[j].Description = respElement.Description;
-												result[j].Price = Math.round(respElement.Price);
+												result[j].Price = parseFloat(respElement.Price).toFixed(2);
 												result[j].Stock = Math.round(respElement.Stock);
 											}
+
 										}
 									}
 
+									for (let j = 0; j < result.length; j++) {
+										const element = result[j];
+										if(!element.Price){
+											result.splice(j, 1);
+										}
+									}
+									
 									// OBJETO MODIFICADO CON DATOS DEL ERP
 									console.log('OBJETO MODIFICADO CON DATOS DEL ERP');
 									console.log('--------------')

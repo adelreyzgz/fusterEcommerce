@@ -161,7 +161,7 @@ $(document).ready(function($) {
                                                     var idarticle = respElement.IDArticle;
                                                     var codarticle = respElement.CodArticle;
                                                     var description = respElement.Description;
-                                                    var price = Math.round(respElement.Price);
+                                                    var price = parseFloat(respElement.Price).toFixed(2);
                                                     var stock = Math.round(respElement.stock);
                                                     var valor=cantidadInput;
                                                     var producto = {

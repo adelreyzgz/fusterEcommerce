@@ -152,12 +152,20 @@ $(document).ready(function($) {
 									const respElement = responseERP[i];
 									for (let j = 0; j < result.length; j++) {
 										const element = result[j];
-										if(respElement.CodArticle == element.noRefFuster){
+										if(respElement.CodArticle == element.noRefFuster && respElement.Price){
 											result[j].IDArticle = respElement.IDArticle;
 											result[j].Description = respElement.Description;
-											result[j].Price = Math.round(respElement.Price);
+											result[j].Price = parseFloat(respElement.Price).toFixed(2);
 											result[j].Stock = Math.round(respElement.Stock);
 										}
+
+									}
+								}
+
+								for (let j = 0; j < result.length; j++) {
+									const element = result[j];
+									if(!element.Price){
+										result.splice(j, 1);
 									}
 								}
 
@@ -818,12 +826,20 @@ $(document).ready(function($) {
 									const respElement = responseERP[i];
 									for (let j = 0; j < result.length; j++) {
 										const element = result[j];
-										if(respElement.CodArticle == element.noRefFuster){
+										if(respElement.CodArticle == element.noRefFuster && respElement.Price){
 											result[j].IDArticle = respElement.IDArticle;
 											result[j].Description = respElement.Description;
-											result[j].Price = Math.round(respElement.Price);
+											result[j].Price = parseFloat(respElement.Price).toFixed(2);
 											result[j].Stock = Math.round(respElement.Stock);
 										}
+
+									}
+								}
+
+								for (let j = 0; j < result.length; j++) {
+									const element = result[j];
+									if(!element.Price){
+										result.splice(j, 1);
 									}
 								}
 
