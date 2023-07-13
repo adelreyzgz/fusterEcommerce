@@ -26,32 +26,44 @@
     <div id="main">
         <div id='content' class='column ocultBusca' role='main' style="width: 100%;">
             <h1 class='page__title title' id='page-title' style="display: flex;justify-content: space-between;">
-                <div style="width: 238px;">Historial de Ordenes</div>
-                <div style="width: 148px;color: #ac0e0e;cursor: pointer;" id='cerrar-sesion'>(Cerrar Sesión)</div>
+                <div style="width: 238px;"><?=${"lang_".$idioma}['ordenesB'];?></div>
+                <div style="width: 148px;color: #ac0e0e;cursor: pointer;" id='cerrar-sesion'>(<?=${"lang_".$idioma}['cerrarSesion'];?>)</div>
             </h1>
             <div class='field field-name-body field-type-text-with-summary field-label-hidden'>
                 <div class='field-items' style="width: 100%;">
                     <div class='field-item even' property='content:encoded'>
                     <div>
-                            <a href="http://www.fusterrepuestos.local/es/perfil/">Información de Perfil</a> | 
-                            <a href="http://www.fusterrepuestos.local/es/perfil/direcciones/">Direcciones de Envio</a> | 
-                            <a href="http://www.fusterrepuestos.local/es/perfil/pedidos/">Historial de Pedidos Webs</a> | 
-                            <a href="http://www.fusterrepuestos.local/es/perfil/ordenes/">Historial de Ordenes</a> | 
-                            <a href="http://www.fusterrepuestos.local/es/perfil/facturas/">Historial de Facturas</a> 
+                            <a href="http://www.fusterrepuestos.local/<?=$idioma;?>/perfil/"><?=${"lang_".$idioma}['datosPerfil'];?></a> | 
+                            <a href="http://www.fusterrepuestos.local/<?=$idioma;?>/perfil/direcciones/"><?=${"lang_".$idioma}['direccionesB'];?></a> | 
+                            <a href="http://www.fusterrepuestos.local/<?=$idioma;?>/perfil/pedidos/"><?=${"lang_".$idioma}['pedidosB'];?></a> | 
+                            <a href="http://www.fusterrepuestos.local/<?=$idioma;?>/perfil/ordenes/"><?=${"lang_".$idioma}['ordenesB'];?></a> | 
+                            <a href="http://www.fusterrepuestos.local/<?=$idioma;?>/perfil/facturas/"><?=${"lang_".$idioma}['facturasB'];?></a> 
                         </div>
                         
                         <div id="ordenesData" style="margin-top: 45px;margin-bottom: 69px;">
-	                        <h4 style="margin-bottom: 25px;">Historial de Ordenes</h4>
+	                        <div style="margin-bottom: 40px;">
+                                <h4 style="float:left"><?=${"lang_".$idioma}['ordenesB'];?> - <span id='annoMostr'>  </span></h4>
 
+                                <select id='annoMostrSelect' style="margin-left: 20px;background-color: transparent;border: 1px solid #c5c5c5;padding: 5px 12px;font-size: 14px;">
+                                    <option value=''> Seleccione el año a mostrar </option>
+                                    <option value='2018'> 2018 </option>
+                                    <option value='2019'> 2019 </option>
+                                    <option value='2020'> 2020 </option>
+                                    <option value='2021'> 2021 </option>
+                                    <option value='2022'> 2022 </option>
+                                    <option value='2023'> 2023 </option>
+
+                                </select>
+                            </div>
                             <table id="example3" class="display" style="width:100%;padding-top: 18px;">
                                 <thead>
                                     <tr>
-                                        <th>Orden</th>
-                                        <th>Fecha</th>
-                                        <th>Entrega</th>
-                                        <th>Cantidad de Productos</th>
-                                        <th>Valor (€)</th>
-                                        <th>Acción</th>
+                                        <th><?=${"lang_".$idioma}['ordenT'];?></th>
+                                        <th><?=${"lang_".$idioma}['fechaT'];?></th>
+                                        <th><?=${"lang_".$idioma}['entregaT'];?></th>
+                                        <th><?=${"lang_".$idioma}['cantidadT'];?></th>
+                                        <th><?=${"lang_".$idioma}['valorT'];?> (€)</th>
+                                        <th><?=${"lang_".$idioma}['accionT'];?></th>
                                     </tr>
                                 </thead>
                                 <tbody id="ordenes">
@@ -63,12 +75,12 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th>Orden</th>
-                                        <th>Fecha</th>
-                                        <th>Entrega</th>
-                                        <th>Cantidad de Productos</th>
-                                        <th>Valor (€)</th>
-                                        <th>Acción</th>
+                                        <th><?=${"lang_".$idioma}['ordenT'];?></th>
+                                        <th><?=${"lang_".$idioma}['fechaT'];?></th>
+                                        <th><?=${"lang_".$idioma}['entregaT'];?></th>
+                                        <th><?=${"lang_".$idioma}['cantidadT'];?></th>
+                                        <th><?=${"lang_".$idioma}['valorT'];?> (€)</th>
+                                        <th><?=${"lang_".$idioma}['accionT'];?></th>
                                     </tr>
                                 </tfoot>
                             </table>

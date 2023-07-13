@@ -36,7 +36,7 @@ $(document).ready(function($) {
 
 	$('.datos-perfil').html('\
 		<div id="perfilData">\
-		<h4 style="margin-bottom: 15px;margin-top: 50px;">Información de Perfil</h4>\
+		<h4 style="margin-bottom: 15px;margin-top: 50px;"><?=${"lang_".$idioma}['datosPerfil'];?></h4>\
 		<p style="color:#141213;padding: 7px;">\
 			<span style="font-weight: 600;"> '+nombreT+': </span>\
 			<span> '+datosUserLogin.CompanyName+' </span>\
@@ -74,7 +74,7 @@ $(document).ready(function($) {
 		localStorage.setItem("user_data_fuster", '');
 		localStorage.setItem("user_data_address_fuster", '');
         localStorage.setItem("user_cart_fuster", '');
-		window.location.replace("./");
+		window.location.replace("./"+idioma+"/");
 	});
 
 });

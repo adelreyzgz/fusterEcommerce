@@ -33,7 +33,7 @@
             <div class="contacto-header">
                 <div class="logos-rrss-header">
                     
-                    <a href="<?=$idioma;?>/acceso/" class="acceso" style="display:none;">Acceso privado<img src="assets/images/acceso.svg"></a>
+                    <a href="<?=$idioma;?>/acceso/" class="acceso" style="display:none;"><?=${"lang_".$idioma}['accesoPriv'];?><img src="assets/images/acceso.svg"></a>
                     <a href="<?=$idioma;?>/carrito/" class="carritoHeader" style="margin-right: 25px;display:none;">
                         <img src="assets/images/carrito_bold.svg" style='margin-left: 6px;width: 21px;'>
                         <span class='cantProdCart' style="position: absolute;background-color: #f26440;border-radius: 18px;padding: 0px 5px;color: #fff;top: -4px;margin-left: -13px;font-size: 12px;">0</span>

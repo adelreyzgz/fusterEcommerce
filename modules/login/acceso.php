@@ -31,7 +31,6 @@
                                         <label for="edit-password" style="width: 100%;">
                                             <div style="display: flex;justify-content: space-between;font-weight: 700;">
                                                 <?=${"lang_".$idioma}['password'];?>*
-                                                <a href="" class='olvidado'><?=${"lang_".$idioma}['hasolvidado'];?></a>
                                             </div>
                                         </label>
                                         <input type="password" id="edit-password" name="password" value="" required size="60" maxlength="128" class="form-text required" style="padding: 9px 14px;color: #929292;height: 39px;"  placeholder="*******"/>

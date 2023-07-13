@@ -512,17 +512,47 @@ $lang_es = array(
 
 "datosPerfil" => "Datos de Perfil",     
 
-   
 "direccionesB" => "Direcciones de Envio",
 "facturasB" => "Historial de Facturas",
 "ordenesB" => "Historial de Ordenes",
-"pedidosB" => "Historial de Pedidos Webs",
-"detallespedidosB" => "Detalles del Pedido Web",
+"pedidosB" => "Historial de Solicitudes",
+"detallespedidosB" => "Detalles de la Solicitud",
 "detallesordenesB" => "Detalles de la Orden",
 "perfilB" => "Datos de Perfil",
+"cerrarSesion" => "Cerrar Sesión",
+"volveral" => "Volver al",
 
 
+"pedidoT" => "Solicitud", 
+"fechaT" => "Fecha", 
+"horaT" => "Hora", 
+"cantidadT" => "Cantidad", 
+"valorT" => "Valor",
+"accionT" => "Acción", 
 
+"ordenT" => "Orden",
+"entregaT" => "Entrega",
+
+"facturaT" => "Factura",
+"totalBT" => "Total Bruto",
+"estadoT" => "Estado",
+
+"direccionT" => "Dirección",
+"cpostalT" => "Codigo Postal",
+"ciudadT" => "Ciudad",
+"paisT" => "País",
+"defectoT" => "Defecto",
+"direnvT" => "Dirección de envio",
+
+"distribuidorT" => "Distribuidor",
+"envioDT" => "Dirección de envio por defecto",
+"fechaST" => "Fecha de solicitud",
+"totalMT" => "Total",
+
+"accesoPriv" => "Acceso privado",
+
+"precioT" => "Precio",
+"totalT" => "Total",
 )
 
 ?>

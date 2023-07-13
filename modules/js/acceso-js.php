@@ -78,13 +78,13 @@ $(document).ready(function($) {
                                 url: 'https://apiecommercefuster.ideaconsulting.es/api/delivery-addresses'
                             }).done(function(response) {
                                 if(response){
-                                    // alert('SUCCESS - Carga de direcciones de envio');
+                                    // alert('SUCCESS - Carga de <?=${"lang_".$idioma}['direccionesB'];?>');
 
                                     localStorage.setItem("user_data_address_fuster", JSON.stringify(response));
-                                    window.location.replace("./");
+                                    window.location.replace("./"+idioma+"/");
                                 }
                             }).fail(function(response) {
-                                alert('ERROR - No se pudo cargar las direcciones de envio.');
+                                alert('ERROR - No se pudo cargar las <?=${"lang_".$idioma}['direccionesB'];?>.');
                                 // console.log('FALLO Carga Datos')
                                 localStorage.setItem("access_token_fuster", '');
                                 localStorage.setItem("user_data_fuster", '');

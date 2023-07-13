@@ -1,6 +1,62 @@
 <script>
 /*global $:true */
 
+
+var detalleT = 'DETALLES';
+var reporteT = 'Reporte de Ordenes';
+var nohayT = "No hay datos disponibles";
+var mostrarT = "Mostrar _MENU_ registros";
+var mostrandoT = "Mostrando _START_ de _END_ de un total de _TOTAL_ entradas";
+var mostrando2T = "Mostrando 0 de 0 de un total de 0 entradas";
+var filtrafoT = "(filtrado de un total de _MAX_ total entradas)";
+var buscarT = "Buscar:";
+var noseenconT = "No se encontraron datos";
+var primeraT = "Primera";
+var ultimaT = "Última";
+var siguienteT = "Siguiente";
+var anteriorT = "Anterior";
+var exportT = "Export data to excel";
+var listadoT = "Listado de Ordenes";
+var filtroT = "Filtro";
+
+if(idioma == 'en'){
+	detalleT = 'DETAILS';
+	reporteT = 'Order Report';
+	nohayT = "No data available";
+	mostrarT = "Show _MENU_ records";
+	mostrandoT = "Displaying _START_ of _END_ of a total of _TOTAL_ entries";
+	mostrando2T = "Showing 0 of 0 of a total of 0 entries";
+	filtrafoT = "(filtered from a total of _MAX_ total entries)";
+	buscarT = "Find:";
+	noseenconT = "No data found";
+	primeraT = "First";
+	ultimaT = "Last";
+	siguienteT = "Next";
+	anteriorT = "Previous";
+	exportT = "Export data to excel";
+	listadoT = "List of Orders";
+	filtroT = "Filter";
+}
+if(idioma == 'fr'){
+	detalleT = 'DÉTAILS' ;
+	reporteT = 'Rapport de commande' ;
+	nohayT = "Aucune donnée disponible" ;
+	mostrarT = "Afficher les enregistrements _MENU_" ;
+	mostrandoT = "Affichage de _START_ sur _END_ sur un total de _TOTAL_ entrées" ;
+	mostrando2T = "Afficher 0 sur 0 sur un total de 0 entrées" ;
+	filtrafoT = "(filtré à partir d'un total de _MAX_ entrées totales)" ;
+	buscarT = "Rechercher :" ;
+	noseenconT = "Aucune donnée trouvée" ;
+	primeraT = "Premier" ;
+	ultimaT = "Dernier" ;
+	siguienteT = "Suivant" ;
+	anteriorT = "Précédent" ;
+	exportT = "Exporter les données vers Excel" ;
+	listadoT = "Liste des commandes" ;
+	filtroT = "Filtre" ;
+}
+
+
 var $ = $.noConflict();
 $(document).ready(function($) {
 	"use strict";
@@ -15,13 +71,23 @@ $(document).ready(function($) {
 	var id = datosUserLogin.IDCustomer;
 	var ordenes= '';
 	var access_token = localStorage.getItem("access_token_fuster");
+
+	var annFilter = localStorage.getItem("filter_order_fuster");
+	var anno = 2023;
+
+	if(annFilter){
+		anno = annFilter;
+	}
+
+	$('#annoMostr').html(anno);
+
 	if(access_token){
 		$.ajax({
 			method: "GET",
 			headers: {
 				"Authorization": "Bearer " + access_token
 			},
-			url: 'https://apiecommercefuster.ideaconsulting.es/api/orders?filter=[{"property":"month","value":1},{"property":"year","value":2012}]'
+			url: 'https://apiecommercefuster.ideaconsulting.es/api/orders?filter=[{"property":"month","value":1},{"property":"year","value":'+anno+'}]'
 		}).done(function(response) {
 				var responseERP = response.data;
 				for (let i = 0; i < responseERP.length; i++) {
@@ -37,7 +103,7 @@ $(document).ready(function($) {
 						<td>'+element.Address+' '+element.ZipCode+' '+element.Country+'</td>\
 						<td>'+element.TotalLines+'</td>\
 						<td>'+a.toFixed(2)+'</td>\
-						<td style="text-align:left"><a href="'+idioma+'/perfil/detalleorden/no-'+element.IDOrder+'/">DETALLES</a></td>\
+						<td style="text-align:left"><a href="'+idioma+'/perfil/detalleorden/no-'+element.IDOrder+'/">'+detalleT+'</a></td>\
 					</tr>\
 					';
 				}
@@ -50,29 +116,29 @@ $(document).ready(function($) {
 					.appendTo('#example3 thead');
 			
 				const d = new Date();
-				var titleN = 'Reporte de Ordenes - '+d;
+				var titleN = reporteT+ ' - '+d;
 				var table = $('#example3').DataTable({
 					"pageLength": 25,
 					language: {
-						"emptyTable":     "No hay datos disponibles",
-						"lengthMenu":     "Mostrar _MENU_ registros",
-						"info":           "Mostrando _START_ de _END_ de un total de _TOTAL_ entradas",
-						"infoEmpty":      "Mostrando 0 de 0 de un total de 0 entradas",
-						"infoFiltered":   "(filtrado de un total de _MAX_ total entradas)",
-						"search":         "Buscar:",
-						"zeroRecords":    "No se encontraron datos",
+						"emptyTable":     nohayT,
+						"lengthMenu":     mostrarT,
+						"info":           mostrandoT,
+						"infoEmpty":      mostrando2T,
+						"infoFiltered":   filtrafoT,
+						"search":         buscarT,
+						"zeroRecords":    noseenconT,
 						"paginate": {
-							"first":      "Primera",
-							"last":       "Última",
-							"next":       "Siguiente",
-							"previous":   "Anterior"
+							"first":      primeraT,
+							"last":       ultimaT,
+							"next":       siguienteT,
+							"previous":   anteriorT 
 						},
 					},
 					dom: 'Bfrtip',
 					buttons: [
 						{
 							extend: 'excel',
-							text: 'Export data to excel',
+							text: exportT,
 							title: titleN,
 							exportOptions: {
 								columns: [0,1,2,3,4],
@@ -127,7 +193,7 @@ $(document).ready(function($) {
 								var valor = '';
 								var cant = 2;
 
-								filas += Addrow(51,1, [{ k: 'A', v: 'Listado de Ordenes' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
+								filas += Addrow(51,1, [{ k: 'A', v: listadoT }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
 								filas += Addrow(5,2, [{ k: 'A', v: '' }, { k: 'B', v: '' }, { k: 'C', v: '' }]);
 
 								for (let index = 0; index < filtros.length-1; index++) {
@@ -173,7 +239,7 @@ $(document).ready(function($) {
 									$(api.column(colIdx).header()).index()
 								);
 								var title = $(cell).text();
-								$(cell).html('<input type="text" placeholder="Filtro ' + title + '" style="padding: 6px;padding-left: 8px;border: 1px solid lightgray;" />');
+								$(cell).html('<input type="text" placeholder="' +filtroT+ ' ' + title + '" style="padding: 6px;padding-left: 8px;border: 1px solid lightgray;" />');
 			
 								$(
 									'input',
@@ -211,6 +277,7 @@ $(document).ready(function($) {
 		});
 	}
 
+
 	function formatDate(date) {
 		var d = new Date(date),
 			month = '' + (d.getMonth() + 1),
@@ -231,8 +298,20 @@ $(document).ready(function($) {
 		localStorage.setItem("user_data_fuster", '');
 		localStorage.setItem("user_data_address_fuster", '');
         localStorage.setItem("user_cart_fuster", '');
-		window.location.replace("./");
+		window.location.replace("./"+idioma+"/");
 	});
+
+	$('#annoMostrSelect').on('change', function() {
+		var val = this.value;
+		
+		if(!val){
+			val = 2023;
+		}
+
+		localStorage.setItem("filter_order_fuster", val);
+		location.reload();
+	});
+	
 });
 
 </script>
